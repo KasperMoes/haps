@@ -1,6 +1,6 @@
 // Haps – gør appen installerbar og viser push-beskeder.
 // Hæv versionsnummeret, når en ny udgave lægges op, så telefonerne henter den.
-const CACHE = "haps-v5";
+const CACHE = "haps-v6";
 const FILES = [
   "./",
   "./index.html",
@@ -11,6 +11,8 @@ const FILES = [
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
   "./fonts/lilita-one-latin-400-normal.woff2",
+  "./fonts/libre-baskerville-latin-400-normal.woff2",
+  "./fonts/libre-baskerville-latin-700-normal.woff2",
   "./fonts/figtree-latin-400-normal.woff2",
   "./fonts/figtree-latin-600-normal.woff2",
   "./fonts/figtree-latin-700-normal.woff2",
