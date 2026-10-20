@@ -653,7 +653,7 @@ async function loadFeed(){
 let feedLoaded = false;
 async function renderFeed(){
   const unread = notes.filter(n=>!n.read_at).length;
-  app.innerHTML = `<div class="wrap"><header class="top feedtop"><a class="roundbtn" style="background:var(--soft)" href="#haps" aria-label="Notifikationer">${I.bell}<span class="dot" id="bellDot" ${unread?"":"hidden"}>${unread||""}</span></a></header>
+  app.innerHTML = `<div class="wrap"><div class="bar"><h1>Feed</h1><a class="roundbtn" style="background:var(--soft)" href="#haps" aria-label="Notifikationer">${I.bell}<span class="dot" id="bellDot" ${unread?"":"hidden"}>${unread||""}</span></a></div>
     <div class="ptr" aria-hidden="true"><div class="pl"><svg viewBox="0 0 24 24"><path d="M2.4 3v4M4 3v4M5.6 3v4M2.4 7a1.6 1.6 0 0 0 3.2 0" stroke-width="1.1"/><path d="M4 8.6V21" stroke-width="1.4"/><circle cx="11.9" cy="12" r="5.1" stroke-width="1.4"/><circle cx="11.9" cy="12" r="3.05" stroke-width="1"/><path d="M21.9 3c-1.7 1.1-2.2 4.2-2.2 7.8h2.2z" stroke-width="1.1"/><path d="M21.9 10.8V21" stroke-width="1.4"/></svg></div></div><div id="pushBox"></div><div id="feedList">${feedLoaded ? "" : loading()}</div></div>`;
   if(feedLoaded) paintFeed();
   try{ await loadFeed(); feedLoaded = true; if(current === "feed") paintFeed(); }
