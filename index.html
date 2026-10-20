@@ -224,7 +224,8 @@ button.photoPick{width:calc(100% - 32px);font:inherit}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 12px}
 .tile{aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--table);position:relative}
 .tile img,.tile svg{width:100%;height:100%;object-fit:cover}
-.tile .tt{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 6px;font:700 12px/1.2 var(--body);color:#fff;background:linear-gradient(transparent,rgba(42,31,26,.65));text-align:left;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tile .tt{position:absolute;left:0;right:0;bottom:0;padding:22px 8px 8px;color:#fff;background:linear-gradient(rgba(42,31,26,0),rgba(42,31,26,.55) 45%,rgba(42,31,26,.78));text-align:left}
+.tile .tt span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:700 11.5px/1.35 var(--body);text-shadow:0 1px 2px rgba(0,0,0,.35)}
 .tile .mk{position:absolute;top:6px;right:6px;width:12px;height:12px;border-radius:50%;box-shadow:0 0 0 2px #fff}
 .mk.anbefales{background:var(--green)}.mk.spiseligt{background:var(--mustard)}
 .locked{margin:24px;padding:24px;border-radius:20px;background:var(--soft);text-align:center;color:var(--muted)}
@@ -1217,7 +1218,7 @@ function paintProfile(p, list, isMe, filter){
   app.innerHTML = `<div class="wrap"><div class="prof">${isMe ? `<button class="roundbtn topright" type="button" id="settings" aria-label="Indstillinger" style="background:var(--soft)">${I.gear}</button>` : `<button class="back topleft" type="button" data-back>${I.back}Tilbage</button>`}
       ${av(p)}<h2>${esc(nameOf(p))}</h2><p class="un">@${esc(p.username)}</p>${stats}${action}</div>
     ${canSee ? (list.length ? `<div class="filters" role="group" aria-label="Vis">${[["alle","Alle"],["anbefales","Kan anbefales"],["spiseligt","Spiseligt"]].map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>
-      <div class="grid">${shown.map(m=>`<a class="tile" href="#meal-${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}${photosOf(m).length>1?`<span class="many" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="7" width="13" height="13" rx="2.5"/><path d="M4 16V6.5A2.5 2.5 0 0 1 6.5 4H16"/></svg></span>`:""}<span class="mk ${esc(m.rating)}"></span><span class="tt">${esc(m.title)}</span></a>`).join("")}</div>
+      <div class="grid">${shown.map(m=>`<a class="tile" href="#meal-${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}${photosOf(m).length>1?`<span class="many" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="7" width="13" height="13" rx="2.5"/><path d="M4 16V6.5A2.5 2.5 0 0 1 6.5 4H16"/></svg></span>`:""}<span class="mk ${esc(m.rating)}"></span><span class="tt"><span>${esc(m.title)}</span></span></a>`).join("")}</div>
       ${shown.length ? "" : `<p class="hint" style="text-align:center;margin-top:16px">Intet her endnu.</p>`}`
       : `<div class="empty"><b>${isMe ? "Din første aftensmad" : "Ingen aftensmad endnu"}</b>${isMe ? "Alt hvad du deler, samles her." : ""}${isMe?`<br><a class="btn red" href="#ny">Del aftensmad</a>`:""}</div>`)
       : `<div class="locked"><b>Bliv venner for at se mere</b>Når I er venner, kan du se ${esc(gen(firstName(p)))} aftensmad.</div>`}
