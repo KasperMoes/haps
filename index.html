@@ -222,14 +222,26 @@ a{color:inherit;text-decoration:none}
 .banner p{font-size:15px;margin-bottom:10px}
 .banner .row2{display:flex;gap:8px;flex-wrap:wrap}
 .ptr{height:0;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
-.ptr .spinner{width:26px;height:26px;border-width:3px;margin-bottom:8px;animation:none}
-.ptr.busy .spinner{animation:spin .8s linear infinite}
+.ptr .pl{width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px var(--line),0 4px 12px rgba(42,31,26,.12);display:grid;place-items:center;color:var(--red);margin-bottom:10px}
+.ptr .pl svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.ptr.busy .pl svg{animation:spin .9s linear infinite}
+.feedtop{justify-content:flex-end;padding-bottom:4px;margin-bottom:6px}
+/* åbningsskærm */
+#splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;
+  background:repeating-linear-gradient(90deg,rgba(215,38,30,.55) 0 22px,transparent 22px 44px),repeating-linear-gradient(0deg,rgba(215,38,30,.55) 0 22px,#fff 22px 44px);
+  background-color:#fff;transition:opacity .45s ease}
+#splash.out{opacity:0;pointer-events:none}
+#splash .st{background:#fff;border-radius:28px;padding:22px 34px 24px;transform:rotate(-4deg);box-shadow:0 10px 0 rgba(42,31,26,.12);display:flex;flex-direction:column;align-items:center;gap:6px;animation:stick .6s cubic-bezier(.2,1.4,.4,1) both}
+#splash svg{width:76px;height:76px;fill:none;stroke:#D7261E;stroke-linecap:round;stroke-linejoin:round}
+#splash b{font-family:var(--display);font-weight:400;font-size:64px;line-height:1;color:var(--red)}
+@keyframes stick{from{transform:rotate(-14deg) scale(.6);opacity:0}}
 .ptr.anim{transition:height .25s}
 .more{display:block;margin:8px auto 0;color:var(--muted);font-weight:700;padding:10px}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<div id="splash" aria-hidden="true"><div class="st"><svg viewBox="0 0 24 24"><path d="M2.4 3v4M4 3v4M5.6 3v4M2.4 7a1.6 1.6 0 0 0 3.2 0" stroke-width="1.1"/><path d="M4 8.6V21" stroke-width="1.4"/><circle cx="11.9" cy="12" r="5.1" stroke-width="1.4"/><circle cx="11.9" cy="12" r="3.05" stroke-width="1"/><path d="M21.9 3c-1.7 1.1-2.2 4.2-2.2 7.8h2.2z" stroke-width="1.1"/><path d="M21.9 10.8V21" stroke-width="1.4"/></svg><b>Haps</b></div></div>
 <div id="app"></div>
 <nav class="tabs" id="tabs" hidden aria-label="Hovedmenu"><div>
   <a class="tab" href="#feed" data-tab="feed"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Feed</a>
@@ -628,8 +640,8 @@ async function loadFeed(){
 let feedLoaded = false;
 async function renderFeed(){
   const unread = notes.filter(n=>!n.read_at).length;
-  app.innerHTML = `<div class="wrap"><header class="top"><span class="logo">Haps</span><a class="roundbtn" style="background:var(--soft)" href="#haps" aria-label="Notifikationer">${I.bell}<span class="dot" id="bellDot" ${unread?"":"hidden"}>${unread||""}</span></a></header>
-    <div class="ptr" aria-hidden="true"><div class="spinner"></div></div><div id="pushBox"></div><div id="feedList">${feedLoaded ? "" : loading()}</div></div>`;
+  app.innerHTML = `<div class="wrap"><header class="top feedtop"><a class="roundbtn" style="background:var(--soft)" href="#haps" aria-label="Notifikationer">${I.bell}<span class="dot" id="bellDot" ${unread?"":"hidden"}>${unread||""}</span></a></header>
+    <div class="ptr" aria-hidden="true"><div class="pl"><svg viewBox="0 0 24 24"><path d="M2.4 3v4M4 3v4M5.6 3v4M2.4 7a1.6 1.6 0 0 0 3.2 0" stroke-width="1.1"/><path d="M4 8.6V21" stroke-width="1.4"/><circle cx="11.9" cy="12" r="5.1" stroke-width="1.4"/><circle cx="11.9" cy="12" r="3.05" stroke-width="1"/><path d="M21.9 3c-1.7 1.1-2.2 4.2-2.2 7.8h2.2z" stroke-width="1.1"/><path d="M21.9 10.8V21" stroke-width="1.4"/></svg></div></div><div id="pushBox"></div><div id="feedList">${feedLoaded ? "" : loading()}</div></div>`;
   if(feedLoaded) paintFeed();
   try{ await loadFeed(); feedLoaded = true; if(current === "feed") paintFeed(); }
   catch(e){ if(current==="feed" && !feedLoaded) $("#feedList").innerHTML = `<div class="empty"><b>Feedet kunne ikke hentes</b>Tjek internettet og træk ned for at prøve igen.</div>`; }
@@ -1019,13 +1031,13 @@ async function refreshFeed(){ try{ await loadFeed(); await loadNotes().catch(()=
   let y0 = null, d = 0, busy = false;
   const box = () => current === "feed" ? $(".ptr") : null;
   window.addEventListener("touchstart", e => { if(busy || window.scrollY > 0 || !box() || document.querySelector(".scrim,.lb")) { y0 = null; return; } y0 = e.touches[0].clientY; d = 0; }, {passive:true});
-  window.addEventListener("touchmove", e => { if(y0 === null) return; d = Math.max(0, Math.min(90, (e.touches[0].clientY - y0) * .5)); const b = box(); if(b){ b.classList.remove("anim"); b.style.height = d + "px"; b.querySelector(".spinner").style.transform = `rotate(${d*4}deg)`; } }, {passive:true});
+  window.addEventListener("touchmove", e => { if(y0 === null) return; d = Math.max(0, Math.min(110, (e.touches[0].clientY - y0) * .5)); const b = box(); if(b){ b.classList.remove("anim"); b.style.height = d + "px"; b.querySelector("svg").style.transform = `rotate(${d*4}deg)`; } }, {passive:true});
   window.addEventListener("touchend", async () => {
     if(y0 === null) return; y0 = null; const b = box(); if(!b) return;
     b.classList.add("anim");
-    if(d < 60){ b.style.height = "0px"; return; }
-    busy = true; b.style.height = "48px"; b.classList.add("busy");
-    await refreshFeed();
+    if(d < 70){ b.style.height = "0px"; return; }
+    busy = true; b.style.height = "64px"; b.querySelector("svg").style.transform = ""; b.classList.add("busy");
+    await Promise.all([refreshFeed(), new Promise(r=>setTimeout(r,900))]);
     const b2 = box(); if(b2){ b2.classList.add("anim"); b2.style.height = "0px"; b2.classList.remove("busy"); } busy = false;
   });
 })();
@@ -1076,6 +1088,7 @@ function renderAuth(mode){
   };
 }
 function renderNewPassword(){
+  hideSplash();
   $("#tabs").hidden = true;
   app.innerHTML = `<div class="auth"><header class="top"><span class="logo">Haps</span></header><p class="lead">Vælg en ny adgangskode.</p>
     <form id="npf"><label class="field"><span>Ny adgangskode</span><input id="np" type="password" autocomplete="new-password"><small>Mindst 6 tegn.</small></label><p class="err" id="nperr" hidden></p>
@@ -1086,10 +1099,12 @@ function renderNewPassword(){
 }
 
 /* ---------- start ---------- */
+const splashT0 = Date.now();
+function hideSplash(){ const sp = $("#splash"); if(!sp || sp.classList.contains("out")) return; setTimeout(()=>{ sp.classList.add("out"); setTimeout(()=>sp.remove(), 500); }, Math.max(0, 1400 - (Date.now() - splashT0))); }
 let recovering = false, started = false;
 async function start(){
   const s = await api.session().catch(()=>null);
-  if(!s){ me = null; started = false; renderAuth(); return; }
+  if(!s){ me = null; started = false; renderAuth(); hideSplash(); return; }
   if(recovering){ renderNewPassword(); return; }
   if(started && me && me.id === s.user.id) return;
   app.innerHTML = `<div class="wrap" style="padding-top:40vh">${loading()}</div>`;
@@ -1102,8 +1117,8 @@ async function start(){
     loadNotes().then(()=>{ if(notes.length) lastNoteId = Math.max(...notes.map(n=>n.id)); }).catch(()=>{});
     const h = location.hash.slice(1);
     if(!h || h === "demo" || /access_token|type=/.test(h)) history.replaceState(null, "", location.pathname + "#feed");
-    route();
-  }catch(e){
+    route(); hideSplash();
+  }catch(e){ hideSplash();
     app.innerHTML = `<div class="wrap"><div class="empty" style="margin-top:30vh"><b>Haps kunne ikke starte</b>Tjek internettet og prøv igen.<br><button class="btn red" type="button" id="retry">Prøv igen</button></div></div>`;
     $("#retry").onclick = start;
   }
