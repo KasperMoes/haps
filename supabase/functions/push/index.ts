@@ -22,7 +22,7 @@ async function nameOf(id: string) {
 }
 async function mealTitle(id: string) {
   const { data } = await sb.from("meals").select("title").eq("id", id).maybeSingle();
-  return data?.title || "din aftensmad";
+  return data?.title || "mad";
 }
 const short = (t: string, n = 120) => { t = String(t || "").trim(); return t.length > n ? t.slice(0, n - 1) + "…" : t; };
 
@@ -38,7 +38,8 @@ Deno.serve(async (req) => {
       const who = await nameOf(r.actor);
       targets = [r.user_id];
       if (r.kind === "haps") {
-        title = "Haps!"; body = `${who} kunne hapse din mad`; url = "./#meal-" + r.meal_id; tag = "haps-" + r.meal_id;
+        const t = await mealTitle(r.meal_id), dish = /^[A-ZÆØÅ][a-zæøå]/.test(t) ? t[0].toLowerCase() + t.slice(1) : t;
+        title = "Haps!"; body = `${who} kunne hapse din ${dish}`; url = "./#meal-" + r.meal_id; tag = "haps-" + r.meal_id;
       } else if (r.kind === "comment") {
         const { data: cm } = await sb.from("comments").select("body").eq("id", r.comment_id).maybeSingle();
         title = `${who} kommenterede ${await mealTitle(r.meal_id)}`; body = short(cm?.body || ""); url = "./#meal-" + r.meal_id;
