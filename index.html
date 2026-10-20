@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Haps</title>
+<meta name="description" content="Del din aftensmad med dine venner.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Haps">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+@font-face{font-family:Lilita;src:url(fonts/lilita-one-latin-400-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Figtree;font-weight:400;src:url(fonts/figtree-latin-400-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Figtree;font-weight:600;src:url(fonts/figtree-latin-600-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Figtree;font-weight:700;src:url(fonts/figtree-latin-700-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Figtree;font-weight:800;src:url(fonts/figtree-latin-800-normal.woff2) format("woff2");font-display:swap}
+
+:root{
+  --red:#D7261E; --red-ink:#B01C15; --red-soft:#FDE7E5;
+  --mustard:#F2B705; --mustard-ink:#3B2A00;
+  --green:#2F7D32;
+  --ink:#2A1F1A; --muted:#7D6F66; --line:#F0E3DE; --soft:#F7EFEC; --table:#F6E9DF;
+  --bg:#FFFFFF;
+  --display:Lilita, "Arial Rounded MT Bold", system-ui, sans-serif;
+  --body:Figtree, system-ui, -apple-system, sans-serif;
+  --tabs:calc(70px + env(safe-area-inset-bottom));
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--body);min-height:100dvh;overscroll-behavior-y:none}
+button,input,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--mustard);outline-offset:2px;border-radius:8px}
+.wrap{max-width:560px;margin:0 auto;padding-bottom:calc(var(--tabs) + 20px)}
+.icon{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- header ---------- */
+.gingham{
+  background:
+    repeating-linear-gradient(90deg,rgba(215,38,30,.55) 0 14px,transparent 14px 28px),
+    repeating-linear-gradient(0deg,rgba(215,38,30,.55) 0 14px,#fff 14px 28px);
+  padding:calc(14px + env(safe-area-inset-top)) 16px 14px;
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.logo{font-family:var(--display);font-size:32px;line-height:1;color:var(--red);background:#fff;padding:4px 14px 7px;border-radius:14px;transform:rotate(-3deg);display:inline-block}
+.roundbtn{width:42px;height:42px;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--ink);position:relative}
+.dot{position:absolute;top:-2px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font:800 11px/18px var(--body);text-align:center}
+.bar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;gap:6px;min-height:58px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.bar h1{font-family:var(--display);font-weight:400;font-size:26px;line-height:1.1;flex:1;padding:0 6px}
+.back{display:flex;align-items:center;gap:2px;font-weight:700;color:var(--red);padding:8px 8px 8px 2px}
+.bar .side{min-width:70px;display:flex;justify-content:flex-end}
+
+/* ---------- post ---------- */
+.post{margin:0 12px 16px;background:#fff;border-radius:20px;box-shadow:0 0 0 1px var(--line),0 2px 0 var(--line);overflow:hidden}
+.ph{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.who{min-width:0;flex:1;text-align:left}
+.who b{display:block;font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who span{font-size:13px;color:var(--muted)}
+.av{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;font:800 15px var(--body);color:#fff;overflow:hidden;background:var(--c,#C27C0E)}
+.av img{width:100%;height:100%;object-fit:cover}
+.pic{display:block;width:calc(100% - 20px);margin:0 10px;border-radius:16px;overflow:hidden;background:var(--table);aspect-ratio:4/3;position:relative}
+.pic img,.pic svg{width:100%;height:100%;object-fit:cover;display:block}
+.detail .pic{aspect-ratio:auto;min-height:200px}
+.detail .pic img{height:auto;max-height:75vh;object-fit:contain;background:var(--table)}
+.detail .pic svg{aspect-ratio:4/3;height:auto}
+.body{padding:12px 14px 2px}
+.dish{font-family:var(--display);font-size:26px;line-height:1.08;margin-bottom:8px;overflow-wrap:anywhere}
+.badge{display:inline-flex;align-items:center;font:800 13px var(--body);padding:4px 11px;border-radius:99px;transform:rotate(-2deg)}
+.badge.anbefales{background:var(--green);color:#fff}
+.badge.spiseligt{background:var(--mustard);color:var(--mustard-ink)}
+.note{font-size:15.5px;line-height:1.45;margin:10px 0 2px;white-space:pre-wrap;overflow-wrap:anywhere}
+.acts{display:flex;align-items:center;gap:6px;padding:10px 12px 4px}
+.haps{display:inline-flex;align-items:center;gap:7px;font:800 15px var(--body);padding:9px 16px;border-radius:99px;background:var(--red-soft);color:var(--red-ink);transition:transform .15s}
+.haps.on{background:var(--red);color:#fff}
+.haps:active{transform:scale(.94)}
+.haps.pop{animation:pop .35s ease}
+@keyframes pop{40%{transform:scale(1.14) rotate(-4deg)}}
+.haps[disabled]{cursor:default}
+.cbtn{display:inline-flex;align-items:center;gap:6px;font:700 15px var(--body);color:var(--muted);padding:9px 8px}
+.edit{margin-left:auto;color:var(--muted);font-weight:700;font-size:14px;padding:9px 8px}
+.whohapsed{display:block;width:100%;text-align:left;font-size:13.5px;color:var(--muted);padding:2px 14px 14px}
+.whohapsed b{color:var(--ink);font-weight:700}
+.nohaps{padding-bottom:14px}
+
+/* ---------- comments ---------- */
+.cms{padding:4px 0 0}
+.cm{display:flex;gap:10px;padding:10px 16px}
+.cm>button{align-self:flex-start}
+.cm .av{width:32px;height:32px;font-size:13px}
+.cm .txt{flex:1;min-width:0}
+.cm .txt b{font-size:14.5px;font-weight:700}
+.cm .txt time{font-size:12.5px;color:var(--muted);margin-left:4px}
+.cm .txt p{font-size:15px;line-height:1.42;white-space:pre-wrap;overflow-wrap:anywhere}
+.cm .del{font-size:12.5px;color:var(--muted);font-weight:700;padding:2px 0}
+.cempty{color:var(--muted);font-size:14.5px;padding:6px 16px 10px}
+.cform{position:sticky;bottom:calc(var(--tabs) + 8px);display:flex;gap:8px;align-items:flex-end;margin:10px 12px 0;padding:8px;background:#fff;border-radius:24px;box-shadow:0 0 0 1px var(--line),0 6px 18px rgba(42,31,26,.08)}
+.cform textarea{flex:1;border:0;background:var(--soft);border-radius:18px;padding:10px 14px;resize:none;max-height:120px;font-size:16px;line-height:1.35;outline:none}
+.send{flex:none;height:40px;padding:0 16px;border-radius:99px;background:var(--red);color:#fff;font-weight:800}
+.send:disabled{opacity:.45}
+
+/* ---------- buttons, forms ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 20px;border-radius:99px;font-weight:800;font-size:15px;background:var(--soft);color:var(--ink)}
+.btn.red{background:var(--red);color:#fff}
+.btn.full{width:100%}
+.btn.small{min-height:36px;padding:0 14px;font-size:14px}
+.btn.ghost{background:transparent;box-shadow:inset 0 0 0 2px var(--line)}
+.btn:disabled{opacity:.5}
+.field{display:block;margin:0 16px 16px}
+.field>span{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+.field input,.field textarea{width:100%;border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-size:16px;outline:none}
+.field input:focus,.field textarea:focus{border-color:var(--ink)}
+.field textarea{min-height:96px;resize:vertical;line-height:1.4}
+.field small{display:block;color:var(--muted);font-size:13px;margin-top:5px}
+.err{color:var(--red-ink);font-size:14px;font-weight:700;margin:0 16px 12px}
+.rates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rate{border-radius:16px;padding:14px 10px;font:800 16px var(--body);border:2px solid var(--line);background:#fff;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:6px}
+.rate .face{font-size:28px;line-height:1}
+.rate[aria-pressed="true"].anbefales{background:var(--green);border-color:var(--green);color:#fff;transform:rotate(-1.5deg)}
+.rate[aria-pressed="true"].spiseligt{background:var(--mustard);border-color:var(--mustard);color:var(--mustard-ink);transform:rotate(1.5deg)}
+.photoPick{margin:0 16px 16px;border-radius:18px;overflow:hidden;background:var(--table);aspect-ratio:4/3;display:grid;place-items:center;position:relative;border:2px dashed #E7CFC3}
+.photoPick img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photoPick .ph-in{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--red-ink);font-weight:800;text-align:center;padding:20px}
+.photoPick .ph-in .icon{width:40px;height:40px}
+.photoPick.has{border-style:solid;border-color:transparent}
+.photoPick .chg{position:absolute;right:10px;bottom:10px;background:#fff;border-radius:99px;padding:7px 14px;font-weight:800;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.photoPick .rm{position:absolute;left:10px;bottom:10px;background:#fff;border-radius:99px;padding:7px 14px;font-weight:800;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.formacts{display:flex;flex-direction:column;gap:10px;margin:6px 16px 0}
+.danger{color:var(--red-ink);font-weight:800;padding:12px;text-align:center}
+
+/* ---------- lists ---------- */
+.sec{font-family:var(--display);font-weight:400;font-size:21px;margin:18px 16px 8px}
+.row{display:flex;align-items:center;gap:12px;padding:10px 16px}
+.row .who b{font-size:16px}
+.row .acts2{display:flex;gap:6px;flex:none}
+.empty{margin:28px 24px;text-align:center;color:var(--muted)}
+.empty b{display:block;font-family:var(--display);font-weight:400;font-size:24px;color:var(--ink);margin-bottom:6px}
+.empty .btn{margin-top:14px}
+.search{margin:0 16px 6px;position:relative}
+.search input{width:100%;border:0;background:var(--soft);border-radius:99px;padding:12px 16px 12px 44px;font-size:16px;outline:none}
+.search .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);width:20px;height:20px}
+.hint{color:var(--muted);font-size:14px;margin:4px 16px 8px}
+
+/* ---------- notifications ---------- */
+.nt{display:flex;gap:12px;align-items:center;padding:12px 16px;width:100%;text-align:left}
+.nt.unread{background:#FFF6F5}
+.nt .txt{flex:1;min-width:0;font-size:15px;line-height:1.35}
+.nt .txt b{font-weight:800}
+.nt .txt time{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.nt .thumb{width:48px;height:48px;border-radius:10px;overflow:hidden;flex:none;background:var(--table)}
+.nt .thumb img,.nt .thumb svg{width:100%;height:100%;object-fit:cover}
+.nt .kind{position:relative}
+.nt .kind i{position:absolute;right:-4px;bottom:-4px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;border:2px solid #fff}
+.nt .kind i svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.6}
+
+/* ---------- profile ---------- */
+.prof{padding:calc(18px + env(safe-area-inset-top)) 18px 12px;text-align:center;position:relative}
+.prof .av{width:92px;height:92px;font-size:36px;margin:0 auto 10px}
+.prof h2{font-family:var(--display);font-weight:400;font-size:34px;line-height:1.05;overflow-wrap:anywhere}
+.prof .un{color:var(--muted);font-size:15px;margin-top:2px}
+.stats{display:flex;gap:26px;justify-content:center;margin:14px 0}
+.stats div{font-size:13px;color:var(--muted)}
+.stats b{display:block;font:800 21px var(--body);color:var(--ink)}
+.prof .topleft{position:absolute;left:12px;top:calc(10px + env(safe-area-inset-top))}
+.prof .topright{position:absolute;right:12px;top:calc(10px + env(safe-area-inset-top))}
+.filters{display:flex;gap:8px;padding:8px 14px 12px;overflow-x:auto}
+.chip{flex:none;padding:7px 13px;border-radius:99px;font:700 14px var(--body);color:var(--muted);background:var(--soft)}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 12px}
+.tile{aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--table);position:relative}
+.tile img,.tile svg{width:100%;height:100%;object-fit:cover}
+.tile .tt{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 6px;font:700 12px/1.2 var(--body);color:#fff;background:linear-gradient(transparent,rgba(42,31,26,.65));text-align:left;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tile .mk{position:absolute;top:6px;right:6px;width:12px;height:12px;border-radius:50%;box-shadow:0 0 0 2px #fff}
+.mk.anbefales{background:var(--green)}.mk.spiseligt{background:var(--mustard)}
+.locked{margin:24px;padding:24px;border-radius:20px;background:var(--soft);text-align:center;color:var(--muted)}
+.locked b{display:block;color:var(--ink);font-family:var(--display);font-weight:400;font-size:22px;margin-bottom:4px}
+
+/* ---------- tabs ---------- */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabs>div{max-width:560px;margin:0 auto;height:70px;display:flex;justify-content:space-around;align-items:center}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font:700 11px var(--body);color:var(--muted);min-width:56px;position:relative;padding:4px 0}
+.tab[aria-current="page"]{color:var(--red)}
+.tab .dot{top:-2px;right:8px}
+.tab.add{width:58px;height:44px;border-radius:99px;background:var(--red);color:#fff;justify-content:center;min-width:0}
+.tab.add .icon{width:26px;height:26px;stroke-width:2.6}
+
+/* ---------- sheet, toast, overlay ---------- */
+.scrim{position:fixed;inset:0;background:rgba(42,31,26,.4);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{background:#fff;width:100%;max-width:560px;border-radius:24px 24px 0 0;max-height:85vh;overflow:auto;padding:8px 0 calc(16px + env(safe-area-inset-bottom));animation:up .25s ease}
+.sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
+.sheet h3{font-family:var(--display);font-weight:400;font-size:24px;margin:0 16px 10px}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+@keyframes fade{from{opacity:0}}
+.toast{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:80;max-width:536px;margin:0 auto;display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:18px;background:var(--ink);color:#fff;font-size:15px;box-shadow:0 10px 30px rgba(0,0,0,.22);animation:drop .3s ease}
+.toast .av{width:34px;height:34px;font-size:13px}
+.toast small{display:block;opacity:.7;font-size:12.5px}
+@keyframes drop{from{transform:translateY(-20px);opacity:0}}
+.lb{position:fixed;inset:0;z-index:90;background:#140F0C;display:flex;align-items:center;justify-content:center;animation:fade .2s;touch-action:pinch-zoom}
+.lb img{max-width:100%;max-height:100%;object-fit:contain}
+.lb button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;display:grid;place-items:center}
+
+/* ---------- auth ---------- */
+.auth{min-height:100dvh;display:flex;flex-direction:column}
+.auth .gingham{justify-content:center;padding-top:calc(48px + env(safe-area-inset-top));padding-bottom:40px;margin-bottom:24px}
+.auth .logo{font-size:56px;padding:8px 22px 12px;border-radius:20px}
+.auth p.lead{margin:0 24px 22px;font-size:17px;text-align:center}
+.auth .switch{display:flex;margin:0 16px 18px;background:var(--soft);border-radius:99px;padding:4px}
+.auth .switch button{flex:1;padding:10px;border-radius:99px;font-weight:800;color:var(--muted)}
+.auth .switch button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.auth form{max-width:560px;width:100%;margin:0 auto}
+.auth .formacts{margin-bottom:28px}
+.linkbtn{color:var(--red-ink);font-weight:700;padding:10px;text-align:center}
+
+/* ---------- misc ---------- */
+.loading{display:flex;justify-content:center;padding:40px}
+.spinner{width:34px;height:34px;border-radius:50%;border:4px solid var(--red-soft);border-top-color:var(--red);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.banner{margin:0 12px 16px;padding:14px 16px;border-radius:18px;background:#FFF4D1;color:var(--mustard-ink)}
+.banner p{font-size:15px;margin-bottom:10px}
+.banner .row2{display:flex;gap:8px;flex-wrap:wrap}
+.ptr{height:0;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+.ptr .spinner{width:26px;height:26px;border-width:3px;margin-bottom:8px;animation:none}
+.ptr.busy .spinner{animation:spin .8s linear infinite}
+.ptr.anim{transition:height .25s}
+.more{display:block;margin:8px auto 0;color:var(--muted);font-weight:700;padding:10px}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="tabs" id="tabs" hidden aria-label="Hovedmenu"><div>
+  <a class="tab" href="#feed" data-tab="feed"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Feed</a>
+  <a class="tab" href="#venner" data-tab="venner"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-4-6"/></svg>Venner<span class="dot" id="reqDot" hidden></span></a>
+  <a class="tab add" href="#ny" aria-label="Del aftensmad"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></a>
+  <a class="tab" href="#haps" data-tab="haps"><svg class="icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Haps<span class="dot" id="notDot" hidden></span></a>
+  <a class="tab" href="#profil" data-tab="profil"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil</a>
+</div></nav>
+
+<script src="vendor/supabase.js"></script>
+<script>
+(function(){
+"use strict";
+const SUPABASE_URL = "https://gfuobktfdgcxapvrgsny.supabase.co";
+const SUPABASE_KEY = "sb_publishable_3bLlnChx3xuM5Od2LtJfmw_YqPsmG-o";
+const VAPID_PUBLIC = "BHPcxQCTKcTV0ArvRLZXSfkkzVq7gvq6RoWJrbgUkMGzgtB_ffkT4VM77tycSJyYzNuMJCJFOHDmHPGrxHwKR3M";
+const DEMO = location.hash === "#demo" || (()=>{ try{ return sessionStorage.getItem("hapsDemo")==="1"; }catch(e){ return false; } })();
+if(location.hash === "#demo"){ try{ sessionStorage.setItem("hapsDemo","1"); }catch(e){} history.replaceState(null,"",location.pathname+"#feed"); }
+
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const lsGet = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
+const lsSet = (k,v) => { try{ localStorage.setItem(k,v); }catch(e){} };
+const isStandalone = () => !!(navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches));
+const RATING = { anbefales:"Kan anbefales", spiseligt:"Spiseligt" };
+
+const I = {
+  fork:'<svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M7 2v8a2 2 0 0 0 2 2v10M11 2v8a2 2 0 0 1-2 2M17 22V2c-2 1-3 4-3 8 0 3 1 4 3 4"/></svg>',
+  chat:'<svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>',
+  back:'<svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
+  bell:'<svg class="icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>',
+  cam:'<svg class="icon" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  search:'<svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  gear:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  x:'<svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  smallFork:'<svg viewBox="0 0 24 24"><path d="M7 2v8a2 2 0 0 0 2 2v10M11 2v8a2 2 0 0 1-2 2M17 22V2c-2 1-3 4-3 8 0 3 1 4 3 4"/></svg>',
+  smallChat:'<svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>',
+  smallUser:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>'
+};
+
+// Tegnet tallerken, når der ikke er et billede
+function plateSVG(seed){
+  const pal = [["#6E3F22","#F0E2A8","#3F7D2B"],["#E3A92C","#F1E3C6","#4C8A2E"],["#C8572E","#EFC66E","#6FA83A"],["#D9822B","#F6E6C8","#3F7D2B"]];
+  let h=0; for(const c of String(seed||"x")) h=(h*31+c.charCodeAt(0))|0; const p = pal[Math.abs(h)%pal.length];
+  return `<svg viewBox="0 0 300 225" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="300" height="225" fill="#F6E9DF"/>
+  <ellipse cx="156" cy="122" rx="104" ry="94" fill="rgba(0,0,0,.08)"/><circle cx="150" cy="115" r="96" fill="#FDFCF8"/><circle cx="150" cy="115" r="78" fill="#F6F3EC"/><circle cx="150" cy="115" r="76" fill="#FBFAF6"/>
+  <path d="M112 92c22-18 60-14 70 10s-6 46-34 48-52-34-36-58z" fill="${p[0]}"/><ellipse cx="186" cy="132" rx="28" ry="22" fill="${p[1]}"/>
+  <circle cx="132" cy="112" r="3" fill="${p[2]}"/><circle cx="150" cy="128" r="3" fill="${p[2]}"/><circle cx="160" cy="104" r="3" fill="${p[2]}"/>
+  <rect x="34" y="60" width="8" height="110" rx="4" fill="#D9C7B8"/><rect x="258" y="60" width="8" height="110" rx="4" fill="#D9C7B8"/></svg>`;
+}
+
+/* ---------- tid ---------- */
+function ago(ts){
+  const d = new Date(ts), now = new Date(), s = (now - d)/1000;
+  if(s < 60) return "Lige nu";
+  if(s < 3600) return `For ${Math.floor(s/60)} min. siden`;
+  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate());
+  const days = Math.round((day(now) - day(d)) / 864e5);
+  if(days === 0) return s < 4*3600 ? `For ${Math.floor(s/3600)} ${Math.floor(s/3600)===1?"time":"timer"} siden` : (d.getHours() >= 16 ? "I aften" : "I dag");
+  if(days === 1) return d.getHours() >= 16 ? "I aftes" : "I går";
+  if(days < 7) return d.toLocaleDateString("da-DK",{weekday:"long"}).replace(/^./,c=>c.toUpperCase());
+  return d.toLocaleDateString("da-DK",{day:"numeric",month:"short", year: d.getFullYear()!==now.getFullYear() ? "numeric" : undefined});
+}
+const shortAgo = ts => { const s=(Date.now()-new Date(ts))/1000; if(s<60) return "nu"; if(s<3600) return Math.floor(s/60)+" min"; if(s<86400) return Math.floor(s/3600)+" t"; if(s<7*86400) return Math.floor(s/86400)+" d"; return new Date(ts).toLocaleDateString("da-DK",{day:"numeric",month:"short"}); };
+
+/* ---------- backend ---------- */
+const MEAL_COLS = "id,user_id,title,rating,note,photo,created_at";
+const PROF_COLS = "id,username,display_name,avatar";
+function realApi(){
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:"haps-auth" } });
+  const fail = e => { if(e) throw e; };
+  const urlCache = new Map();
+  return {
+    onAuth: cb => sb.auth.onAuthStateChange((ev,s)=>cb(ev,s)),
+    async session(){ const { data } = await sb.auth.getSession(); return data.session; },
+    async signUp({email,password,username,display_name}){ const { data, error } = await sb.auth.signUp({ email, password, options:{ data:{ username, display_name }, emailRedirectTo: location.origin + location.pathname } }); fail(error); return data; },
+    async signIn(email,password){ const { data, error } = await sb.auth.signInWithPassword({ email, password }); fail(error); return data; },
+    async reset(email){ const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname }); fail(error); },
+    async updatePassword(password){ const { error } = await sb.auth.updateUser({ password }); fail(error); },
+    async signOut(){ await sb.auth.signOut(); urlCache.clear(); },
+    async usernameAvailable(name){ const { data, error } = await sb.rpc("username_available", { name }); fail(error); return !!data; },
+    async profiles(ids){ if(!ids.length) return []; const { data, error } = await sb.from("profiles").select(PROF_COLS).in("id", ids); fail(error); return data||[]; },
+    async profileByUsername(u){ const { data, error } = await sb.from("profiles").select(PROF_COLS).eq("username", u).maybeSingle(); fail(error); return data; },
+    async updateProfile(id, patch){ const { error } = await sb.from("profiles").update(patch).eq("id", id); fail(error); },
+    async searchUsers(q, myId){ const t = q.replace(/[%_,()]/g,""); const { data, error } = await sb.from("profiles").select(PROF_COLS).or(`username.ilike.${t}%,display_name.ilike.%${t}%`).neq("id", myId).order("username").limit(20); fail(error); return data||[]; },
+    async feed(before){ let q = sb.from("meals").select(MEAL_COLS).order("created_at",{ascending:false}).limit(40); if(before) q = q.lt("created_at", before); const { data, error } = await q; fail(error); return data||[]; },
+    async mealsOf(uid){ const { data, error } = await sb.from("meals").select(MEAL_COLS).eq("user_id", uid).order("created_at",{ascending:false}).limit(500); fail(error); return data||[]; },
+    async meal(id){ const { data, error } = await sb.from("meals").select(MEAL_COLS).eq("id", id).maybeSingle(); fail(error); return data; },
+    async mealsByIds(ids){ if(!ids.length) return []; const { data, error } = await sb.from("meals").select(MEAL_COLS).in("id", ids); fail(error); return data||[]; },
+    async saveMeal(m){ const row = { title:m.title, rating:m.rating, note:m.note, photo:m.photo||"" };
+      if(m.id){ const { data, error } = await sb.from("meals").update(row).eq("id", m.id).select(MEAL_COLS).single(); fail(error); return data; }
+      const { data, error } = await sb.from("meals").insert(row).select(MEAL_COLS).single(); fail(error); return data; },
+    async deleteMeal(m){ const { error } = await sb.from("meals").delete().eq("id", m.id); fail(error); if(m.photo) await sb.storage.from("photos").remove([m.photo]); },
+    async uploadPhoto(path, blob){ const { error } = await sb.storage.from("photos").upload(path, blob, { contentType:"image/jpeg", upsert:false }); fail(error); },
+    async removePhoto(path){ if(path) await sb.storage.from("photos").remove([path]); },
+    async photoUrls(paths){
+      const need = paths.filter(p=>p && !urlCache.has(p));
+      if(need.length){ const { data, error } = await sb.storage.from("photos").createSignedUrls(need, 60*60*6); fail(error); (data||[]).forEach(d=>{ if(d.signedUrl) urlCache.set(d.path, d.signedUrl); }); }
+      const out = {}; paths.forEach(p=>{ if(urlCache.has(p)) out[p]=urlCache.get(p); }); return out;
+    },
+    async uploadAvatar(path, blob){ const { error } = await sb.storage.from("avatars").upload(path, blob, { contentType:"image/jpeg", upsert:false }); fail(error); },
+    async removeAvatar(path){ if(path) await sb.storage.from("avatars").remove([path]); },
+    async haps(ids){ if(!ids.length) return []; const { data, error } = await sb.from("haps").select("meal_id,user_id,created_at").in("meal_id", ids).order("created_at"); fail(error); return data||[]; },
+    async addHaps(mealId, myId){ const { error } = await sb.from("haps").insert({ meal_id:mealId, user_id:myId }); if(error && error.code!=="23505") fail(error); },
+    async removeHaps(mealId, myId){ const { error } = await sb.from("haps").delete().eq("meal_id", mealId).eq("user_id", myId); fail(error); },
+    async commentCounts(ids){ if(!ids.length) return {}; const { data, error } = await sb.from("comments").select("meal_id").in("meal_id", ids); fail(error); const o={}; (data||[]).forEach(r=>{ o[r.meal_id]=(o[r.meal_id]||0)+1; }); return o; },
+    async comments(mealId){ const { data, error } = await sb.from("comments").select("id,meal_id,user_id,body,created_at").eq("meal_id", mealId).order("created_at"); fail(error); return data||[]; },
+    async addComment(mealId, body, myId){ const { data, error } = await sb.from("comments").insert({ meal_id:mealId, body, user_id:myId }).select("id,meal_id,user_id,body,created_at").single(); fail(error); return data; },
+    async deleteComment(id){ const { error } = await sb.from("comments").delete().eq("id", id); fail(error); },
+    async friendships(){ const { data, error } = await sb.from("friendships").select("*"); fail(error); return data||[]; },
+    async request(myId, otherId){ const { error } = await sb.from("friendships").insert({ requester:myId, addressee:otherId }); fail(error); },
+    async accept(id){ const { error } = await sb.from("friendships").update({ status:"accepted" }).eq("id", id); fail(error); },
+    async removeFriendship(id){ const { error } = await sb.from("friendships").delete().eq("id", id); fail(error); },
+    async notifications(){ const { data, error } = await sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(80); fail(error); return data||[]; },
+    async markRead(){ const { error } = await sb.from("notifications").update({ read_at:new Date().toISOString() }).is("read_at", null); fail(error); },
+    async savePush(s){ await sb.from("push_subscriptions").delete().eq("endpoint", s.endpoint); const { error } = await sb.from("push_subscriptions").insert(s); fail(error); },
+    async deletePush(endpoint){ await sb.from("push_subscriptions").delete().eq("endpoint", endpoint); }
+  };
+}
+
+function demoApi(){
+  const svgUrl = k => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(DEMO_PLATES(k));
+  const t = h => new Date(Date.now() - h*3600e3).toISOString();
+  const me = { id:"u1", username:"kasper", display_name:"Kasper", avatar:"" };
+  const people = [me, {id:"u2",username:"mette",display_name:"Mette Holm",avatar:""},{id:"u3",username:"jonas",display_name:"Jonas",avatar:""},{id:"u4",username:"sofie",display_name:"Sofie Lund",avatar:""},{id:"u5",username:"ali",display_name:"Ali",avatar:""},{id:"u6",username:"ida.k",display_name:"Ida Kjær",avatar:""}];
+  const imgs = {};
+  ["karry","lasagne","flaesk","frikadeller","suppe","tarteletter"].forEach(k=>imgs["d/"+k]=svgUrl(k));
+  let friends = [{id:1,requester:"u1",addressee:"u2",status:"accepted"},{id:2,requester:"u3",addressee:"u1",status:"accepted"},{id:3,requester:"u4",addressee:"u1",status:"accepted"},{id:4,requester:"u6",addressee:"u1",status:"pending"}], fid=10;
+  let meals = [
+    {id:"m1",user_id:"u2",title:"Boller i karry med ris",rating:"anbefales",note:"Mormors opskrift, bare med lidt mere karry. Børnene tog to portioner.",photo:"d/karry",created_at:t(1.5)},
+    {id:"m2",user_id:"u3",title:"Mandagslasagne",rating:"spiseligt",note:"Rester fra søndag og den sidste ost i køleskabet. Den gik.",photo:"d/lasagne",created_at:t(3)},
+    {id:"m3",user_id:"u1",title:"Frikadeller med kartoffelsalat",rating:"anbefales",note:"Første gang med svin og kalv halv-halv. Kartoffelsalaten var bedre end frikadellerne.",photo:"d/frikadeller",created_at:t(22)},
+    {id:"m4",user_id:"u4",title:"Stegt flæsk med persillesovs",rating:"anbefales",note:"Sprødt hele vejen igennem. Ovnen på 220 og ingen tålmodighed.",photo:"d/flaesk",created_at:t(27)},
+    {id:"m5",user_id:"u1",title:"Linsesuppe",rating:"spiseligt",note:"For lidt salt, men brødet reddede den.",photo:"d/suppe",created_at:t(70)},
+    {id:"m6",user_id:"u1",title:"Tarteletter",rating:"anbefales",note:"",photo:"d/tarteletter",created_at:t(140)},
+    {id:"m7",user_id:"u1",title:"Tirsdagspasta",rating:"spiseligt",note:"",photo:"",created_at:t(190)}
+  ];
+  let haps = [{meal_id:"m1",user_id:"u1"},{meal_id:"m1",user_id:"u3"},{meal_id:"m1",user_id:"u4"},{meal_id:"m3",user_id:"u3"},{meal_id:"m3",user_id:"u2"},{meal_id:"m3",user_id:"u4"},{meal_id:"m4",user_id:"u2"},{meal_id:"m2",user_id:"u4"}];
+  let cid=100, comments = [
+    {id:1,meal_id:"m3",user_id:"u2",body:"Hvad kom der i kartoffelsalaten? Den ser god ud.",created_at:t(2)},
+    {id:2,meal_id:"m3",user_id:"u1",body:"Creme fraiche, purløg og lidt sennep.",created_at:t(1)},
+    {id:3,meal_id:"m1",user_id:"u3",body:"Den skal jeg have opskriften på!",created_at:t(1)},
+    {id:4,meal_id:"m2",user_id:"u2",body:"Mandagslasagne er den bedste lasagne.",created_at:t(2)}];
+  let nid=50, notes = [
+    {id:1,user_id:"u1",actor:"u3",kind:"haps",meal_id:"m3",created_at:t(.05),read_at:null},
+    {id:2,user_id:"u1",actor:"u2",kind:"comment",meal_id:"m3",comment_id:1,created_at:t(2),read_at:null},
+    {id:3,user_id:"u1",actor:"u6",kind:"friend_request",created_at:t(5),read_at:null},
+    {id:4,user_id:"u1",actor:"u2",kind:"haps",meal_id:"m3",created_at:t(20),read_at:t(19)},
+    {id:5,user_id:"u1",actor:"u4",kind:"friend_accept",created_at:t(48),read_at:t(47)}];
+  let session = lsGet("hapsDemoIn") ? { user:{ id:"u1" } } : null, cb = ()=>{};
+  const vis = id => id==="u1" || friends.some(f=>f.status==="accepted" && ((f.requester==="u1"&&f.addressee===id)||(f.addressee==="u1"&&f.requester===id)));
+  return {
+    onAuth: f => { cb=f; },
+    async session(){ return session; },
+    async signUp(){ session={user:{id:"u1"}}; lsSet("hapsDemoIn","1"); cb("SIGNED_IN",session); return {session}; },
+    async signIn(){ session={user:{id:"u1"}}; lsSet("hapsDemoIn","1"); cb("SIGNED_IN",session); return {session}; },
+    async reset(){}, async updatePassword(){},
+    async signOut(){ session=null; try{ localStorage.removeItem("hapsDemoIn"); }catch(e){} cb("SIGNED_OUT",null); },
+    async usernameAvailable(n){ return !people.some(p=>p.username===n); },
+    async profiles(ids){ return people.filter(p=>ids.includes(p.id)).map(p=>({...p})); },
+    async profileByUsername(u){ const p = people.find(p=>p.username===u); return p ? {...p} : null; },
+    async updateProfile(id, patch){ Object.assign(people.find(p=>p.id===id), patch); },
+    async searchUsers(q){ q=q.toLowerCase(); return people.filter(p=>p.id!=="u1" && (p.username.startsWith(q) || p.display_name.toLowerCase().includes(q))); },
+    async feed(before){ return meals.filter(m=>vis(m.user_id) && (!before || m.created_at < before)).sort((a,b)=>b.created_at.localeCompare(a.created_at)).slice(0,40).map(m=>({...m})); },
+    async mealsOf(uid){ return vis(uid) ? meals.filter(m=>m.user_id===uid).sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(m=>({...m})) : []; },
+    async meal(id){ const m = meals.find(m=>m.id===id); return m && vis(m.user_id) ? {...m} : null; },
+    async mealsByIds(ids){ return meals.filter(m=>ids.includes(m.id)).map(m=>({...m})); },
+    async saveMeal(m){ if(m.id){ const x = meals.find(y=>y.id===m.id); Object.assign(x, {title:m.title,rating:m.rating,note:m.note,photo:m.photo||""}); return {...x}; }
+      const x = {id:"m"+Date.now(), user_id:"u1", title:m.title, rating:m.rating, note:m.note, photo:m.photo||"", created_at:new Date().toISOString()}; meals.push(x); return {...x}; },
+    async deleteMeal(m){ meals = meals.filter(x=>x.id!==m.id); },
+    async uploadPhoto(path, blob){ imgs[path] = URL.createObjectURL(blob); },
+    async removePhoto(){},
+    async photoUrls(paths){ const o={}; paths.forEach(p=>{ if(imgs[p]) o[p]=imgs[p]; }); return o; },
+    async uploadAvatar(path, blob){ imgs["av:"+path] = URL.createObjectURL(blob); },
+    async removeAvatar(){},
+    avatarUrl: p => imgs["av:"+p] || "",
+    async haps(ids){ return haps.filter(h=>ids.includes(h.meal_id)); },
+    async addHaps(mid, uid){ if(!haps.some(h=>h.meal_id===mid&&h.user_id===uid)) haps.push({meal_id:mid,user_id:uid}); },
+    async removeHaps(mid, uid){ haps = haps.filter(h=>!(h.meal_id===mid&&h.user_id===uid)); },
+    async commentCounts(ids){ const o={}; comments.forEach(c=>{ if(ids.includes(c.meal_id)) o[c.meal_id]=(o[c.meal_id]||0)+1; }); return o; },
+    async comments(mid){ return comments.filter(c=>c.meal_id===mid).map(c=>({...c})); },
+    async addComment(mid, body, uid){ const c={id:cid++,meal_id:mid,user_id:uid,body,created_at:new Date().toISOString()}; comments.push(c); return {...c}; },
+    async deleteComment(id){ comments = comments.filter(c=>c.id!==id); },
+    async friendships(){ return friends.map(f=>({...f})); },
+    async request(a,b){ friends.push({id:fid++,requester:a,addressee:b,status:"pending"}); },
+    async accept(id){ friends.find(f=>f.id===id).status="accepted"; notes = notes.filter(n=>!(n.kind==="friend_request" && n.actor===friends.find(f=>f.id===id).requester)); },
+    async removeFriendship(id){ const f = friends.find(x=>x.id===id); friends = friends.filter(x=>x.id!==id); if(f) notes = notes.filter(n=>!(n.kind==="friend_request" && n.actor===f.requester)); },
+    async notifications(){ return notes.map(n=>({...n})); },
+    async markRead(){ notes.forEach(n=>{ if(!n.read_at) n.read_at=new Date().toISOString(); }); },
+    async savePush(){}, async deletePush(){}
+  };
+}
+// Tegnede retter til demo-tilstand
+function DEMO_PLATES(kind){
+  const food={
+  karry:`<ellipse cx="150" cy="122" rx="62" ry="54" fill="#F4EFE0"/><path d="M200 70c40 6 64 40 54 80s-56 62-92 44c-10-30 6-60 0-90 10-20 20-36 38-34z" fill="#E3A92C"/>${[[212,108],[232,140],[198,150],[220,170],[188,118]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="13" fill="#F1E3C6"/>`).join("")}`,
+  lasagne:`<g transform="rotate(-8 150 115)"><rect x="92" y="72" width="104" height="92" rx="8" fill="#C8572E"/><rect x="92" y="72" width="104" height="80" rx="8" fill="#EFC66E"/><circle cx="120" cy="96" r="8" fill="#C98A3A"/><circle cx="160" cy="120" r="7" fill="#C98A3A"/></g><ellipse cx="226" cy="140" rx="34" ry="28" fill="#6FA83A"/><circle cx="238" cy="148" r="7" fill="#D9412E"/>`,
+  frikadeller:`${[[110,96],[148,84],[124,134],[160,126]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="22" ry="18" fill="#6E3F22"/><ellipse cx="${x-5}" cy="${y-6}" rx="10" ry="6" fill="#8E5A34"/>`).join("")}<path d="M190 80c40-6 64 24 60 60s-36 54-70 42c-10-30-8-70 10-102z" fill="#F0E2A8"/>`,
+  flaesk:`${[0,1,2,3].map(i=>`<rect x="${92+i*6}" y="${74+i*20}" width="84" height="16" rx="4" fill="#E7C08E" transform="rotate(-12 140 110)"/>`).join("")}${[[200,96],[226,110],[206,128]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="17" ry="15" fill="#F1D88A"/>`).join("")}<ellipse cx="196" cy="160" rx="40" ry="20" fill="#E7EDCF"/>`,
+  suppe:`<circle cx="150" cy="115" r="66" fill="#D9822B"/><path d="M110 112c20-22 60-22 80 0" stroke="#F6E6C8" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+  tarteletter:`${[[118,94],[182,94],[150,146]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="34" fill="#D9A55A"/><circle cx="${x}" cy="${y}" r="26" fill="#F2E7CF"/><circle cx="${x+8}" cy="${y-10}" r="4" fill="#5C8F3A"/>`).join("")}`}[kind]||"";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 225"><rect width="300" height="225" fill="#F6E9DF"/><ellipse cx="156" cy="122" rx="112" ry="100" fill="rgba(0,0,0,.10)"/><circle cx="150" cy="115" r="104" fill="#FDFCF8"/><circle cx="150" cy="115" r="86" fill="#F6F3EC"/><circle cx="150" cy="115" r="84" fill="#FBFAF6"/>${food}</svg>`;
+}
+const api = DEMO ? demoApi() : realApi();
+
+/* ---------- state ---------- */
+let me = null;
+const people = new Map();
+const meals = new Map();          // id -> meal
+let feedIds = [], feedDone = false;
+let hapsBy = new Map();           // mealId -> [userId]
+let ccount = {};                  // mealId -> antal kommentarer
+let friendships = [];
+let notes = [], lastNoteId = 0;
+const personOf = id => people.get(id) || { id, username:"?", display_name:"", avatar:"" };
+const nameOf = p => (p && (p.display_name || p.username)) || "?";
+const firstName = p => nameOf(p).split(/\s+/)[0];
+const gen = n => /[sxz]$/i.test(n) ? n + "'" : n + "s";
+
+const COLORS = ["#B5476A","#2E7DAF","#C27C0E","#4E8A3E","#7056B5","#B85A1F","#1F7A73","#9C3D8C"];
+const colorOf = id => { let h=0; for(const c of String(id)) h=(h*31+c.charCodeAt(0))|0; return COLORS[Math.abs(h)%COLORS.length]; };
+const initials = p => nameOf(p).trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();
+const avatarUrl = path => !path ? "" : (api.avatarUrl ? api.avatarUrl(path) : `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}`);
+const av = p => { const u = avatarUrl(p.avatar); return `<span class="av" style="--c:${colorOf(p.id)}" aria-hidden="true">${u ? `<img src="${esc(u)}" alt="">` : esc(initials(p))}</span>`; };
+
+function rel(otherId){
+  const f = friendships.find(f => (f.requester===me.id && f.addressee===otherId) || (f.addressee===me.id && f.requester===otherId));
+  if(!f) return { state:"none" };
+  if(f.status==="accepted") return { state:"friends", f };
+  return { state: f.requester===me.id ? "sent" : "received", f };
+}
+const friendIds = () => friendships.filter(f=>f.status==="accepted").map(f=>f.requester===me.id ? f.addressee : f.requester);
+
+async function ensurePeople(ids){
+  const need = [...new Set(ids)].filter(id => id && !people.has(id));
+  if(need.length) (await api.profiles(need)).forEach(p => people.set(p.id, p));
+}
+function storeMeals(list){ list.forEach(m => meals.set(m.id, m)); }
+async function loadExtras(ids){
+  if(!ids.length) return;
+  const [hs, cc] = await Promise.all([api.haps(ids).catch(()=>[]), api.commentCounts(ids).catch(()=>({}))]);
+  ids.forEach(id => { hapsBy.set(id, []); ccount[id] = cc[id] || 0; });
+  hs.forEach(h => hapsBy.get(h.meal_id).push(h.user_id));
+  await ensurePeople(hs.map(h=>h.user_id));
+}
+
+/* ---------- billeder ---------- */
+async function hydrate(root){
+  const els = [...root.querySelectorAll("img[data-photo]")]; if(!els.length) return;
+  let urls = {}; try{ urls = await api.photoUrls([...new Set(els.map(e=>e.dataset.photo))]); }catch(e){}
+  els.forEach(el => { const u = urls[el.dataset.photo];
+    const fallback = () => { const s = document.createElement("span"); s.innerHTML = plateSVG(el.dataset.photo); el.replaceWith(s.firstChild); };
+    if(u){ el.addEventListener("error", fallback, {once:true}); el.src = u; } else fallback(); });
+}
+const photo = (m, alt) => m.photo ? `<img data-photo="${esc(m.photo)}" alt="${esc(alt||m.title)}" loading="lazy">` : plateSVG(m.id);
+
+async function shrink(file, max){
+  try{
+    const bmp = await createImageBitmap(file, {imageOrientation:"from-image"});
+    const k = Math.min(1, max/Math.max(bmp.width, bmp.height));
+    const cv = document.createElement("canvas"); cv.width = Math.round(bmp.width*k); cv.height = Math.round(bmp.height*k);
+    cv.getContext("2d").drawImage(bmp, 0, 0, cv.width, cv.height);
+    return await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error("toBlob")),"image/jpeg",0.85));
+  }catch(e){
+    const im = new Image(); const url = URL.createObjectURL(file);
+    await new Promise((res,rej)=>{ im.onload=res; im.onerror=rej; im.src=url; });
+    const k = Math.min(1, max/Math.max(im.naturalWidth, im.naturalHeight));
+    const cv = document.createElement("canvas"); cv.width = Math.round(im.naturalWidth*k); cv.height = Math.round(im.naturalHeight*k);
+    cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
+    return await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error("toBlob")),"image/jpeg",0.85));
+  }
+}
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2));
+
+/* ---------- små UI-hjælpere ---------- */
+let toastT;
+function toast(html, small){
+  document.querySelectorAll(".toast").forEach(t=>t.remove());
+  const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role","status");
+  t.innerHTML = typeof html === "string" ? `<div>${html}${small?`<small>${esc(small)}</small>`:""}</div>` : "";
+  document.body.appendChild(t); clearTimeout(toastT); toastT = setTimeout(()=>t.remove(), 3000);
+  t.onclick = () => t.remove();
+  return t;
+}
+const say = msg => toast(esc(msg));
+function sheet(html){
+  const s = document.createElement("div"); s.className = "scrim";
+  s.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  document.body.appendChild(s);
+  const close = () => s.remove();
+  s.addEventListener("click", e => { if(e.target === s) close(); });
+  return { el: s.querySelector(".sheet"), close };
+}
+function lightbox(src, alt){
+  const lb = document.createElement("div"); lb.className = "lb"; lb.setAttribute("role","dialog"); lb.setAttribute("aria-modal","true");
+  lb.innerHTML = `<img src="${esc(src)}" alt="${esc(alt)}"><button type="button" aria-label="Luk">${I.x}</button>`;
+  document.body.appendChild(lb);
+  const close = () => lb.remove();
+  lb.querySelector("button").onclick = close;
+  lb.addEventListener("click", e => { if(e.target === lb) close(); });
+}
+const loading = () => `<div class="loading"><div class="spinner" role="status" aria-label="Henter"></div></div>`;
+const hapsLine = (ids) => {
+  if(!ids.length) return "";
+  const firstId = ids.includes(me.id) ? me.id : ids[ids.length-1];
+  const first = firstId===me.id ? "Du" : esc(firstName(personOf(firstId)));
+  const rest = ids.length - 1;
+  return `<b>${first}</b>${rest ? ` og ${rest} ${rest===1?"anden":"andre"}` : ""} kunne hapse den`;
+};
+
+/* ---------- opslag ---------- */
+function postHTML(m, detail){
+  const p = personOf(m.user_id), hs = hapsBy.get(m.id) || [], mine = m.user_id === me.id, on = hs.includes(me.id), cc = ccount[m.id] || 0;
+  return `<article class="post" data-meal="${esc(m.id)}">
+    <button class="ph" type="button" data-go="${esc("#u-"+p.username)}">${av(p)}<span class="who"><b>${esc(mine ? "Dig" : nameOf(p))}</b><span>${esc(ago(m.created_at))}</span></span></button>
+    ${detail ? `<button class="pic" type="button" data-zoom aria-label="Vis billedet i fuld størrelse">${photo(m)}</button>` : `<a class="pic" href="#meal-${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}</a>`}
+    <div class="body">${detail ? `<h2 class="dish">${esc(m.title)}</h2>` : `<a href="#meal-${esc(m.id)}" style="color:inherit;text-decoration:none"><h2 class="dish">${esc(m.title)}</h2></a>`}
+      <span class="badge ${esc(m.rating)}">${RATING[m.rating]||""}</span>
+      ${m.note ? `<p class="note">${esc(m.note)}</p>` : ""}</div>
+    <div class="acts">
+      <button class="haps ${on?"on":""}" type="button" data-haps ${mine?"disabled":""} aria-pressed="${on}" aria-label="${mine?`${hs.length} haps`:(on?"Fjern dit haps":"Haps")}">${I.fork}Haps${hs.length?` ${hs.length}`:""}</button>
+      ${detail ? "" : `<a class="cbtn" href="#meal-${esc(m.id)}" aria-label="${cc} kommentarer">${I.chat}${cc||""}</a>`}
+      ${detail && mine ? `<a class="edit" href="#ret-${esc(m.id)}">Ret</a>` : ""}
+    </div>
+    ${hs.length ? `<button class="whohapsed" type="button" data-who>${hapsLine(hs)}</button>` : `<div class="nohaps"></div>`}
+  </article>`;
+}
+
+async function toggleHaps(mealId, btn){
+  const hs = hapsBy.get(mealId) || []; hapsBy.set(mealId, hs);
+  const on = hs.includes(me.id);
+  if(on) hs.splice(hs.indexOf(me.id),1); else hs.push(me.id);
+  refreshPost(mealId, !on);
+  try{ if(on) await api.removeHaps(mealId, me.id); else await api.addHaps(mealId, me.id); }
+  catch(e){ if(on) hs.push(me.id); else hs.splice(hs.indexOf(me.id),1); refreshPost(mealId); say("Det lykkedes ikke. Tjek internettet og prøv igen."); }
+}
+function refreshPost(mealId, popped){
+  document.querySelectorAll(`.post[data-meal="${CSS.escape(mealId)}"]`).forEach(el => {
+    const detail = !!el.closest(".detail"), m = meals.get(mealId); if(!m) return;
+    const keepImg = el.querySelector(".pic img[src]");
+    const tmp = document.createElement("div"); tmp.innerHTML = postHTML(m, detail);
+    const neu = tmp.firstElementChild;
+    if(keepImg){ const slot = neu.querySelector(".pic img"); if(slot){ slot.replaceWith(keepImg); } }
+    el.replaceWith(neu); hydrate(neu);
+    if(popped){ const b = neu.querySelector("[data-haps]"); b.classList.add("pop"); }
+  });
+}
+function whoSheet(mealId){
+  const ids = (hapsBy.get(mealId) || []).slice().reverse();
+  const s = sheet(`<h3>Kunne hapse den</h3>${ids.map(id=>{ const p=personOf(id); return `<button class="row" type="button" data-go="#u-${esc(p.username)}" style="width:100%">${av(p)}<span class="who"><b>${esc(id===me.id?"Dig":nameOf(p))}</b><span>@${esc(p.username)}</span></span></button>`; }).join("")}`);
+  s.el.addEventListener("click", e => { const g = e.target.closest("[data-go]"); if(g){ s.close(); location.hash = g.dataset.go; } });
+}
+
+// Klik i opslag (fælles for alle sider)
+app.addEventListener("click", e => {
+  const go = e.target.closest("[data-go]"); if(go){ location.hash = go.dataset.go; return; }
+  const post = e.target.closest(".post"); if(!post) return;
+  const id = post.dataset.meal;
+  if(e.target.closest("[data-haps]")){ const b = e.target.closest("[data-haps]"); if(!b.disabled) toggleHaps(id, b); return; }
+  if(e.target.closest("[data-who]")){ whoSheet(id); return; }
+  const z = e.target.closest("[data-zoom]"); if(z){ const im = z.querySelector("img[src]"); if(im) lightbox(im.src, im.alt); }
+});
+
+/* ---------- navigation ---------- */
+let current = "", navDepth = 0;
+const backBtn = (label) => `<button class="back" type="button" data-back>${I.back}${esc(label||"Tilbage")}</button>`;
+app.addEventListener("click", e => { if(e.target.closest("[data-back]")){ if(navDepth > 0) history.back(); else location.hash = "#feed"; } });
+window.addEventListener("hashchange", () => { navDepth++; route(); });
+function setTab(t){
+  document.querySelectorAll(".tab[data-tab]").forEach(a => { if(a.dataset.tab === t) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+}
+async function route(){
+  if(!me) return;
+  const h = decodeURIComponent(location.hash.slice(1)) || "feed";
+  current = h;
+  window.scrollTo(0,0);
+  if(h === "feed"){ setTab("feed"); return renderFeed(); }
+  if(h === "venner"){ setTab("venner"); return renderFriends(); }
+  if(h === "haps"){ setTab("haps"); return renderNotes(); }
+  if(h === "profil"){ setTab("profil"); return renderProfile(me.username); }
+  if(h === "ny"){ setTab(""); return renderForm(null); }
+  if(h.startsWith("ret-")){ setTab(""); return renderForm(h.slice(4)); }
+  if(h.startsWith("meal-")){ setTab(""); return renderMeal(h.slice(5)); }
+  if(h.startsWith("u-")){ const u = h.slice(2); setTab(u === me.username ? "profil" : ""); return renderProfile(u); }
+  location.replace("#feed");
+}
+
+/* ---------- feed ---------- */
+async function loadFeed(){
+  const [list, fs] = await Promise.all([api.feed(), api.friendships()]);
+  friendships = fs; storeMeals(list); feedIds = list.map(m=>m.id); feedDone = list.length < 40;
+  await Promise.all([ensurePeople([...list.map(m=>m.user_id), ...fs.flatMap(f=>[f.requester,f.addressee])]), loadExtras(feedIds)]);
+  updateDots();
+}
+let feedLoaded = false;
+async function renderFeed(){
+  const unread = notes.filter(n=>!n.read_at).length;
+  app.innerHTML = `<div class="wrap"><header class="gingham"><span class="logo">Haps</span><a class="roundbtn" href="#haps" aria-label="Notifikationer">${I.bell}<span class="dot" id="bellDot" ${unread?"":"hidden"}>${unread||""}</span></a></header>
+    <div class="ptr" aria-hidden="true"><div class="spinner"></div></div><div id="pushBox"></div><div id="feedList">${feedLoaded ? "" : loading()}</div></div>`;
+  if(feedLoaded) paintFeed();
+  try{ await loadFeed(); feedLoaded = true; if(current === "feed") paintFeed(); }
+  catch(e){ if(current==="feed" && !feedLoaded) $("#feedList").innerHTML = `<div class="empty"><b>Feedet kunne ikke hentes</b>Tjek internettet og træk ned for at prøve igen.</div>`; }
+  pushBanner();
+}
+function paintFeed(){
+  const el = $("#feedList"); if(!el) return;
+  const list = feedIds.map(id=>meals.get(id)).filter(Boolean);
+  if(!list.length){
+    const hasFriends = friendIds().length > 0;
+    el.innerHTML = `<div class="empty"><b>${hasFriends ? "Ingen aftensmad endnu" : "Velkommen til Haps"}</b>${hasFriends ? "Hvad fik du at spise i aften? Del det med dine venner." : "Find dine venner, så kan I se hinandens aftensmad her. Og del din egen, når du har spist."}<br>
+      <a class="btn red" href="#ny">Del aftensmad</a> ${hasFriends?"":`<a class="btn" href="#venner">Find venner</a>`}</div>`;
+    return;
+  }
+  el.innerHTML = list.map(m=>postHTML(m,false)).join("") + (feedDone ? "" : `<button class="more" type="button" id="moreBtn">Vis ældre</button>`);
+  hydrate(el);
+  const mb = $("#moreBtn"); if(mb) mb.onclick = async () => {
+    mb.disabled = true; mb.textContent = "Henter …";
+    try{ const last = meals.get(feedIds[feedIds.length-1]); const more = await api.feed(last.created_at); storeMeals(more);
+      feedIds.push(...more.map(m=>m.id)); feedDone = more.length < 40;
+      await Promise.all([ensurePeople(more.map(m=>m.user_id)), loadExtras(more.map(m=>m.id))]); paintFeed(); }
+    catch(e){ mb.disabled = false; mb.textContent = "Vis ældre"; say("Kunne ikke hente flere."); }
+  };
+}
+
+/* ---------- ét opslag ---------- */
+async function renderMeal(id){
+  app.innerHTML = `<div class="wrap detail"><div class="bar">${backBtn()}<h1></h1></div><div id="mealBox">${loading()}</div></div>`;
+  let m;
+  try{
+    m = await api.meal(id);
+    if(!m){ $("#mealBox").innerHTML = `<div class="empty"><b>Opslaget findes ikke</b>Det er måske slettet, eller I er ikke venner længere.</div>`; return; }
+    meals.set(m.id, m);
+    const [cs] = await Promise.all([api.comments(id), loadExtras([id])]);
+    await ensurePeople([m.user_id, ...cs.map(c=>c.user_id)]);
+    ccount[id] = cs.length;
+    if(current !== "meal-"+id) return;
+    paintMeal(m, cs);
+  }catch(e){ if(current === "meal-"+id) $("#mealBox").innerHTML = `<div class="empty"><b>Opslaget kunne ikke hentes</b>Tjek internettet og prøv igen.</div>`; }
+}
+function paintMeal(m, cs){
+  const box = $("#mealBox");
+  const canDel = c => c.user_id === me.id || m.user_id === me.id;
+  box.innerHTML = postHTML(m, true) + `<div class="cms" id="cms">${cs.length ? cs.map(c=>{ const p = personOf(c.user_id); return `<div class="cm" data-c="${c.id}"><button type="button" data-go="#u-${esc(p.username)}" aria-label="${esc(nameOf(p))}">${av(p)}</button><div class="txt"><b>${esc(c.user_id===me.id?"Dig":nameOf(p))}</b><time>${esc(shortAgo(c.created_at))}</time><p>${esc(c.body)}</p>${canDel(c)?`<button class="del" type="button" data-delc="${c.id}">Slet</button>`:""}</div></div>`; }).join("") : `<p class="cempty">Ingen kommentarer endnu.</p>`}</div>
+    <form class="cform" id="cform"><textarea rows="1" maxlength="1000" placeholder="Skriv en kommentar …" aria-label="Kommentar"></textarea><button class="send" type="submit" disabled>Send</button></form>`;
+  hydrate(box);
+  const f = $("#cform"), ta = f.querySelector("textarea"), send = f.querySelector(".send");
+  ta.addEventListener("input", () => { send.disabled = !ta.value.trim(); ta.style.height = "auto"; ta.style.height = Math.min(120, ta.scrollHeight) + "px"; });
+  f.onsubmit = async e => {
+    e.preventDefault(); const body = ta.value.trim(); if(!body) return;
+    send.disabled = true;
+    try{ const c = await api.addComment(m.id, body, me.id); cs.push(c); ccount[m.id] = cs.length; paintMeal(m, cs); window.scrollTo(0, document.body.scrollHeight); }
+    catch(err){ send.disabled = false; say("Kommentaren blev ikke sendt. Prøv igen."); }
+  };
+  box.querySelectorAll("[data-delc]").forEach(b => b.onclick = async () => {
+    if(!confirm("Slet kommentaren?")) return;
+    const cid = +b.dataset.delc;
+    try{ await api.deleteComment(cid); const i = cs.findIndex(c=>c.id===cid); cs.splice(i,1); ccount[m.id] = cs.length; paintMeal(m, cs); }
+    catch(err){ say("Kommentaren blev ikke slettet."); }
+  });
+}
+
+/* ---------- del / ret aftensmad ---------- */
+async function renderForm(editId){
+  let m = { title:"", rating:"", note:"", photo:"" };
+  if(editId){
+    app.innerHTML = `<div class="wrap">${loading()}</div>`;
+    const got = meals.get(editId) || await api.meal(editId).catch(()=>null);
+    if(!got || got.user_id !== me.id){ location.replace("#feed"); return; }
+    m = { ...got };
+  }
+  let blob = null, removePhoto = false, busy = false;
+  app.innerHTML = `<div class="wrap"><div class="bar">${backBtn("Annullér")}<h1>${editId ? "Ret aftensmad" : "Del aftensmad"}</h1></div>
+    <form id="mf" novalidate>
+      <label class="photoPick" id="pp"><input type="file" accept="image/*" hidden id="file">
+        <span class="ph-in" id="ppIn">${I.cam}<span>Tag et billede af maden</span></span></label>
+      <label class="field"><span>Hvad fik du?</span><input id="title" maxlength="80" autocomplete="off" placeholder="Fx frikadeller med kartoffelsalat" value="${esc(m.title)}"></label>
+      <div class="field"><span id="rlbl">Hvordan var den?</span><div class="rates" role="group" aria-labelledby="rlbl">
+        <button type="button" class="rate anbefales" data-r="anbefales" aria-pressed="${m.rating==="anbefales"}"><span class="face">😋</span>Kan anbefales</button>
+        <button type="button" class="rate spiseligt" data-r="spiseligt" aria-pressed="${m.rating==="spiseligt"}"><span class="face">😐</span>Spiseligt</button></div></div>
+      <label class="field"><span>Fortæl lidt om den <i style="font-style:normal;color:var(--muted);font-weight:400">(valgfrit)</i></span><textarea id="note" maxlength="1000" placeholder="Opskrift, hvem der lavede den, hvad du ville gøre anderledes …">${esc(m.note)}</textarea></label>
+      <p class="err" id="err" hidden></p>
+      <div class="formacts"><button class="btn red full" type="submit" id="save">${editId ? "Gem ændringer" : "Del aftensmad"}</button>
+        ${editId ? `<button class="danger" type="button" id="del">Slet opslaget</button>` : ""}</div>
+    </form></div>`;
+  const pp = $("#pp"), file = $("#file");
+  const showPic = src => { pp.classList.add("has"); pp.querySelector(".ph-in").hidden = true; pp.querySelectorAll("img,.chg,.rm").forEach(x=>x.remove());
+    pp.insertAdjacentHTML("beforeend", `<img src="${esc(src)}" alt="Billede af maden"><span class="chg">Skift billede</span><button type="button" class="rm">Fjern</button>`); };
+  const clearPic = () => { pp.classList.remove("has"); pp.querySelector(".ph-in").hidden = false; pp.querySelectorAll("img,.chg,.rm").forEach(x=>x.remove()); };
+  if(m.photo){ api.photoUrls([m.photo]).then(u => { if(u[m.photo] && !blob && !removePhoto) showPic(u[m.photo]); }).catch(()=>{}); }
+  pp.addEventListener("click", e => { if(e.target.closest(".rm")){ e.preventDefault(); blob = null; removePhoto = true; file.value = ""; clearPic(); } });
+  file.onchange = async () => {
+    const f = file.files[0]; if(!f) return;
+    try{ blob = await shrink(f, 1600); removePhoto = false; showPic(URL.createObjectURL(blob)); }
+    catch(e){ say("Billedet kunne ikke åbnes. Prøv et andet."); }
+  };
+  document.querySelectorAll(".rate").forEach(b => b.onclick = () => { m.rating = b.dataset.r; document.querySelectorAll(".rate").forEach(x => x.setAttribute("aria-pressed", x===b)); });
+  const err = msg => { const e = $("#err"); e.textContent = msg; e.hidden = !msg; };
+  $("#mf").addEventListener("input", () => { if(!$("#err").hidden) err(""); });
+  document.querySelectorAll(".rate").forEach(b => b.addEventListener("click", () => err("")));
+  $("#mf").onsubmit = async e => {
+    e.preventDefault(); if(busy) return;
+    const title = $("#title").value.trim(), note = $("#note").value.trim();
+    if(!title){ err("Skriv hvad du fik at spise."); $("#title").focus(); return; }
+    if(!m.rating){ err("Vælg om den kan anbefales eller er spiselig."); return; }
+    err(""); busy = true; const btn = $("#save"); btn.disabled = true; btn.textContent = blob ? "Lægger billedet op …" : "Gemmer …";
+    let newPath = "";
+    try{
+      const old = m.photo || "";
+      if(blob){ newPath = `${me.id}/${uid()}.jpg`; await api.uploadPhoto(newPath, blob); }
+      const photoPath = blob ? newPath : (removePhoto ? "" : old);
+      const saved = await api.saveMeal({ id: editId || null, title, rating: m.rating, note, photo: photoPath });
+      if(old && old !== photoPath) api.removePhoto(old).catch(()=>{});
+      meals.set(saved.id, saved);
+      if(!editId){ feedIds.unshift(saved.id); hapsBy.set(saved.id, []); ccount[saved.id] = 0; }
+      say(editId ? "Ændringerne er gemt." : "Din aftensmad er delt.");
+      location.replace(editId ? "#meal-"+saved.id : "#feed");
+    }catch(ex){
+      if(newPath) api.removePhoto(newPath).catch(()=>{});
+      busy = false; btn.disabled = false; btn.textContent = editId ? "Gem ændringer" : "Del aftensmad";
+      err("Det blev ikke gemt. Tjek internettet og prøv igen.");
+    }
+  };
+  const del = $("#del"); if(del) del.onclick = async () => {
+    if(!confirm("Slet opslaget? Haps og kommentarer forsvinder også.")) return;
+    try{ await api.deleteMeal(m); meals.delete(m.id); feedIds = feedIds.filter(x=>x!==m.id); say("Opslaget er slettet."); location.replace("#profil"); }
+    catch(ex){ say("Opslaget blev ikke slettet. Prøv igen."); }
+  };
+}
+
+/* ---------- venner ---------- */
+async function renderFriends(){
+  app.innerHTML = `<div class="wrap"><div class="bar"><h1>Venner</h1></div>
+    <div class="search">${I.search}<input id="q" type="search" placeholder="Søg på navn eller brugernavn" autocomplete="off" autocapitalize="none" aria-label="Søg efter venner"></div>
+    <div id="res"></div><div id="fl">${loading()}</div></div>`;
+  let t; $("#q").addEventListener("input", e => { clearTimeout(t); t = setTimeout(()=>search(e.target.value.trim().toLowerCase()), 250); });
+  try{ friendships = await api.friendships(); await ensurePeople(friendships.flatMap(f=>[f.requester,f.addressee])); updateDots(); }catch(e){}
+  if(current === "venner") paintFriends();
+}
+function relButton(p){
+  const r = rel(p.id);
+  if(r.state === "friends") return `<span class="btn small ghost" aria-disabled="true">Venner</span>`;
+  if(r.state === "sent") return `<button class="btn small" type="button" data-cancel="${r.f.id}">Annullér</button>`;
+  if(r.state === "received") return `<button class="btn small red" type="button" data-accept="${r.f.id}">Godkend</button>`;
+  return `<button class="btn small red" type="button" data-add="${esc(p.id)}">Tilføj</button>`;
+}
+const personRow = (p, right) => `<div class="row"><button type="button" data-go="#u-${esc(p.username)}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">${av(p)}<span class="who"><b>${esc(nameOf(p))}</b><span>@${esc(p.username)}</span></span></button><span class="acts2">${right}</span></div>`;
+function paintFriends(){
+  const el = $("#fl"); if(!el) return;
+  const inc = friendships.filter(f=>f.status==="pending" && f.addressee===me.id);
+  const out = friendships.filter(f=>f.status==="pending" && f.requester===me.id);
+  const fr = friendIds().map(personOf).sort((a,b)=>nameOf(a).localeCompare(nameOf(b),"da"));
+  let h = "";
+  if(inc.length) h += `<h2 class="sec">Venneanmodninger</h2>` + inc.map(f=>personRow(personOf(f.requester), `<button class="btn small red" type="button" data-accept="${f.id}">Godkend</button><button class="btn small" type="button" data-decline="${f.id}">Afvis</button>`)).join("");
+  h += `<h2 class="sec">Dine venner${fr.length?` (${fr.length})`:""}</h2>`;
+  h += fr.length ? fr.map(p=>personRow(p, "")).join("") : `<p class="hint">Du har ingen venner på Haps endnu. Søg efter dem ovenfor, eller send dem linket til appen, så de kan oprette sig.</p><div style="margin:4px 16px"><button class="btn" type="button" id="shareApp">Del linket til Haps</button></div>`;
+  if(out.length) h += `<h2 class="sec">Sendte anmodninger</h2>` + out.map(f=>personRow(personOf(f.addressee), `<button class="btn small" type="button" data-cancel="${f.id}">Annullér</button>`)).join("");
+  el.innerHTML = h;
+  const sh = $("#shareApp"); if(sh) sh.onclick = shareApp;
+}
+async function shareApp(){
+  const url = location.origin + location.pathname;
+  const text = `Kom med på Haps, så kan vi se hinandens aftensmad. Mit brugernavn er @${me.username}`;
+  try{ if(navigator.share){ await navigator.share({ title:"Haps", text, url }); return; } }catch(e){ return; }
+  try{ await navigator.clipboard.writeText(text + "\n" + url); say("Linket er kopieret."); }catch(e){ say(url); }
+}
+async function search(q){
+  const el = $("#res"); if(!el) return;
+  if(q.length < 2){ el.innerHTML = ""; return; }
+  try{ const list = await api.searchUsers(q, me.id); list.forEach(p=>people.set(p.id,p));
+    if($("#q") && $("#q").value.trim().toLowerCase() !== q) return;
+    el.innerHTML = list.length ? `<h2 class="sec">Resultater</h2>` + list.map(p=>personRow(p, relButton(p))).join("") : `<p class="hint">Ingen hedder "${esc(q)}". Brugernavne finder du på folks profil.</p>`;
+  }catch(e){ el.innerHTML = `<p class="hint">Søgningen virkede ikke. Prøv igen.</p>`; }
+}
+async function friendAction(e){
+  const b = e.target.closest("[data-add],[data-accept],[data-decline],[data-cancel],[data-unfriend]"); if(!b) return false;
+  b.disabled = true;
+  try{
+    if(b.dataset.add){ await api.request(me.id, b.dataset.add); say("Venneanmodningen er sendt."); }
+    else if(b.dataset.accept){ await api.accept(+b.dataset.accept); say("I er nu venner."); feedLoaded = false; }
+    else if(b.dataset.decline){ await api.removeFriendship(+b.dataset.decline); }
+    else if(b.dataset.cancel){ await api.removeFriendship(+b.dataset.cancel); say("Anmodningen er annulleret."); }
+    else if(b.dataset.unfriend){ if(!confirm("Fjern som ven? I kan ikke længere se hinandens aftensmad.")){ b.disabled=false; return true; } await api.removeFriendship(+b.dataset.unfriend); say("I er ikke længere venner."); feedLoaded = false; }
+    friendships = await api.friendships(); await ensurePeople(friendships.flatMap(f=>[f.requester,f.addressee])); updateDots();
+  }catch(ex){ b.disabled = false; say(b.dataset.add ? "Kunne ikke sende anmodningen. Prøv igen." : "Det lykkedes ikke. Prøv igen."); return true; }
+  if(current === "venner"){ paintFriends(); const q = $("#q"); if(q && q.value.trim().length>=2) search(q.value.trim().toLowerCase()); }
+  else if(current === "haps") paintNotes();
+  else route();
+  return true;
+}
+app.addEventListener("click", e => { friendAction(e); });
+
+/* ---------- notifikationer ---------- */
+async function loadNotes(){
+  const list = await api.notifications();
+  notes = list;
+  await ensurePeople(list.map(n=>n.actor));
+  const need = [...new Set(list.map(n=>n.meal_id).filter(id=>id && !meals.has(id)))];
+  if(need.length) storeMeals(await api.mealsByIds(need).catch(()=>[]));
+  updateDots();
+}
+async function renderNotes(){
+  app.innerHTML = `<div class="wrap"><div class="bar"><h1>Haps</h1></div><div id="nl">${notes.length ? "" : loading()}</div></div>`;
+  if(notes.length) paintNotes();
+  try{ await loadNotes(); friendships = await api.friendships(); }catch(e){}
+  if(current !== "haps") return;
+  paintNotes();
+  if(notes.some(n=>!n.read_at)){ api.markRead().then(()=>{ notes.forEach(n=>{ if(!n.read_at) n.read_at = new Date().toISOString(); }); updateDots(); }).catch(()=>{}); }
+}
+function noteText(n){
+  const who = `<b>${esc(nameOf(personOf(n.actor)))}</b>`, m = meals.get(n.meal_id);
+  if(n.kind === "haps") return `${who} kunne hapse din mad`;
+  if(n.kind === "comment") return `${who} kommenterede ${m ? esc(m.title) : "din aftensmad"}`;
+  if(n.kind === "friend_request") return `${who} vil være venner med dig`;
+  if(n.kind === "friend_accept") return `${who} har godkendt din venneanmodning`;
+  return who;
+}
+function paintNotes(){
+  const el = $("#nl"); if(!el) return;
+  if(!notes.length){ el.innerHTML = `<div class="empty"><b>Ingen haps endnu</b>Når nogen hapser din mad, kommenterer eller vil være venner med dig, kan du se det her.</div>`; return; }
+  el.innerHTML = notes.map(n => {
+    const p = personOf(n.actor), m = meals.get(n.meal_id);
+    const href = n.meal_id ? `#meal-${n.meal_id}` : `#u-${p.username}`;
+    const badge = n.kind==="haps" ? I.smallFork : n.kind==="comment" ? I.smallChat : I.smallUser;
+    const r = n.kind === "friend_request" ? rel(n.actor) : null;
+    const right = r && r.state === "received" ? `<span class="acts2" style="display:flex;gap:6px"><button class="btn small red" type="button" data-accept="${r.f.id}">Godkend</button></span>`
+      : m ? `<span class="thumb">${photo(m,"")}</span>` : "";
+    return `<div class="nt ${n.read_at?"":"unread"}"><a href="${esc(href)}" style="display:flex;gap:12px;align-items:center;flex:1;min-width:0;color:inherit;text-decoration:none"><span class="kind">${av(p)}<i>${badge}</i></span><span class="txt">${noteText(n)}<time>${esc(ago(n.created_at))}</time></span></a>${right}</div>`;
+  }).join("");
+  hydrate(el);
+}
+function updateDots(){
+  const u = notes.filter(n=>!n.read_at).length, req = friendships.filter(f=>f.status==="pending" && f.addressee===me.id).length;
+  const nd = $("#notDot"), rd = $("#reqDot"), bd = $("#bellDot");
+  nd.hidden = !u; nd.textContent = u > 9 ? "9+" : u;
+  rd.hidden = !req; rd.textContent = req;
+  if(bd){ bd.hidden = !u; bd.textContent = u > 9 ? "9+" : u; }
+}
+// Hent nye notifikationer i baggrunden og vis et banner, når der kommer et haps
+async function poll(){
+  if(!me || document.hidden) return;
+  try{
+    const before = lastNoteId;
+    await loadNotes();
+    const fresh = notes.filter(n => n.id > before && !n.read_at);
+    if(notes.length) lastNoteId = Math.max(lastNoteId, ...notes.map(n=>n.id));
+    if(before && fresh.length && current !== "haps"){
+      const n = fresh[0], p = personOf(n.actor);
+      const t = toast(""); t.innerHTML = `${av(p)}<div>${noteText(n)}<small>Lige nu</small></div>`;
+      t.onclick = () => { t.remove(); location.hash = n.meal_id ? "#meal-"+n.meal_id : "#haps"; };
+      if(n.meal_id && (n.kind === "haps")){ api.haps([n.meal_id]).then(hs => { hapsBy.set(n.meal_id, hs.map(h=>h.user_id)); refreshPost(n.meal_id); }).catch(()=>{}); }
+    }
+  }catch(e){}
+}
+setInterval(poll, 45000);
+document.addEventListener("visibilitychange", () => { if(!document.hidden && me){ poll(); if(current === "feed") refreshFeed(); } });
+
+/* ---------- profil ---------- */
+async function renderProfile(username){
+  const isMe = username === me.username, myRoute = current;
+  app.innerHTML = `<div class="wrap">${loading()}</div>`;
+  let p;
+  try{ p = isMe ? me : await api.profileByUsername(username); }catch(e){}
+  if(!p){ app.innerHTML = `<div class="wrap"><div class="bar">${backBtn()}<h1></h1></div><div class="empty"><b>Profilen findes ikke</b>Brugernavnet er måske ændret.</div></div>`; return; }
+  people.set(p.id, p);
+  const r = isMe ? null : rel(p.id);
+  const canSee = isMe || (r && r.state === "friends");
+  let list = [];
+  try{
+    if(!isMe){ friendships = await api.friendships(); }
+    const r2 = isMe ? null : rel(p.id);
+    if(isMe || (r2 && r2.state === "friends")){ list = await api.mealsOf(p.id); storeMeals(list); await loadExtras(list.slice(0,60).map(m=>m.id)); }
+  }catch(e){}
+  if(current !== myRoute) return;
+  paintProfile(p, list, isMe);
+}
+function paintProfile(p, list, isMe, filter){
+  filter = filter || "alle";
+  const r = isMe ? null : rel(p.id), canSee = isMe || (r && r.state === "friends");
+  const rec = list.filter(m=>m.rating==="anbefales").length;
+  const shown = filter === "alle" ? list : list.filter(m=>m.rating===filter);
+  let action = "";
+  if(isMe) action = `<button class="btn red" type="button" id="editProf">Rediger profil</button>`;
+  else if(r.state === "friends") action = `<button class="btn ghost" type="button" data-unfriend="${r.f.id}">Venner ✓</button>`;
+  else if(r.state === "sent") action = `<button class="btn" type="button" data-cancel="${r.f.id}">Anmodning sendt · Annullér</button>`;
+  else if(r.state === "received") action = `<button class="btn red" type="button" data-accept="${r.f.id}">Godkend venneanmodning</button>`;
+  else action = `<button class="btn red" type="button" data-add="${esc(p.id)}">Tilføj som ven</button>`;
+  const stats = canSee ? `<div class="stats"><div><b>${list.length}</b>${list.length===1?"aftensmåltid":"aftensmåltider"}</div>${isMe?`<div><b>${friendIds().length}</b>venner</div>`:""}<div><b>${rec}</b>anbefalet</div></div>` : `<div style="height:14px"></div>`;
+  app.innerHTML = `<div class="wrap"><div class="prof">${isMe ? `<button class="roundbtn topright" type="button" id="settings" aria-label="Indstillinger" style="background:var(--soft)">${I.gear}</button>` : `<button class="back topleft" type="button" data-back>${I.back}Tilbage</button>`}
+      ${av(p)}<h2>${esc(nameOf(p))}</h2><p class="un">@${esc(p.username)}</p>${stats}${action}</div>
+    ${canSee ? (list.length ? `<div class="filters" role="group" aria-label="Vis">${[["alle","Alle"],["anbefales","Kan anbefales"],["spiseligt","Spiseligt"]].map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>
+      <div class="grid">${shown.map(m=>`<a class="tile" href="#meal-${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}<span class="mk ${esc(m.rating)}"></span><span class="tt">${esc(m.title)}</span></a>`).join("")}</div>
+      ${shown.length ? "" : `<p class="hint" style="text-align:center;margin-top:16px">Intet her endnu.</p>`}`
+      : `<div class="empty"><b>${isMe ? "Din første aftensmad" : "Ingen aftensmad endnu"}</b>${isMe ? "Alt hvad du deler, samles her." : ""}${isMe?`<br><a class="btn red" href="#ny">Del aftensmad</a>`:""}</div>`)
+      : `<div class="locked"><b>Bliv venner for at se mere</b>Når I er venner, kan du se ${esc(gen(firstName(p)))} aftensmad.</div>`}
+  </div>`;
+  hydrate(app);
+  app.querySelectorAll("[data-f]").forEach(b => b.onclick = () => paintProfile(p, list, isMe, b.dataset.f));
+  const ep = $("#editProf"); if(ep) ep.onclick = editProfile;
+  const st = $("#settings"); if(st) st.onclick = settingsSheet;
+}
+function editProfile(){
+  let avBlob = null, avRemove = false;
+  const s = sheet(`<h3>Rediger profil</h3>
+    <div style="display:flex;align-items:center;gap:14px;margin:0 16px 16px"><span id="avPrev">${av(me)}</span>
+      <label class="btn small" style="cursor:pointer">Skift billede<input type="file" accept="image/*" hidden id="avFile"></label>
+      ${me.avatar ? `<button class="btn small" type="button" id="avRm">Fjern</button>` : ""}</div>
+    <label class="field"><span>Navn</span><input id="pn" maxlength="40" value="${esc(me.display_name)}" autocomplete="name"></label>
+    <label class="field"><span>Brugernavn</span><input id="pu" maxlength="24" value="${esc(me.username)}" autocapitalize="none" autocomplete="username"><small>3–24 tegn: små bogstaver, tal, punktum og bundstreg.</small></label>
+    <p class="err" id="perr" hidden></p>
+    <div class="formacts"><button class="btn red full" type="button" id="psave">Gem</button></div>`);
+  const prev = s.el.querySelector("#avPrev");
+  s.el.querySelector("#avFile").onchange = async e => { const f = e.target.files[0]; if(!f) return;
+    try{ avBlob = await shrink(f, 400); avRemove = false; prev.innerHTML = `<span class="av"><img src="${URL.createObjectURL(avBlob)}" alt=""></span>`; }catch(ex){ say("Billedet kunne ikke åbnes."); } };
+  const rm = s.el.querySelector("#avRm"); if(rm) rm.onclick = () => { avBlob = null; avRemove = true; prev.innerHTML = av({...me, avatar:""}); };
+  s.el.querySelector("#psave").onclick = async () => {
+    const name = s.el.querySelector("#pn").value.trim(), un = s.el.querySelector("#pu").value.trim().toLowerCase();
+    const perr = s.el.querySelector("#perr"); const err = m => { perr.textContent = m; perr.hidden = !m; };
+    if(!/^[a-z0-9_.æøå]{3,24}$/.test(un)){ err("Brugernavnet skal være 3–24 tegn: små bogstaver, tal, punktum eller bundstreg."); return; }
+    const btn = s.el.querySelector("#psave"); btn.disabled = true; btn.textContent = "Gemmer …";
+    try{
+      if(un !== me.username && !(await api.usernameAvailable(un))){ err("Det brugernavn er taget."); btn.disabled = false; btn.textContent = "Gem"; return; }
+      const patch = {}; if(name !== me.display_name) patch.display_name = name; if(un !== me.username) patch.username = un;
+      const oldAv = me.avatar;
+      if(avBlob){ const path = `${me.id}/${uid()}.jpg`; await api.uploadAvatar(path, avBlob); patch.avatar = path; }
+      else if(avRemove) patch.avatar = "";
+      if(Object.keys(patch).length) await api.updateProfile(me.id, patch);
+      if(patch.avatar !== undefined && oldAv) api.removeAvatar(oldAv).catch(()=>{});
+      Object.assign(me, patch); people.set(me.id, me);
+      s.close(); say("Profilen er gemt."); route();
+    }catch(ex){ btn.disabled = false; btn.textContent = "Gem"; err(ex && ex.code === "23505" ? "Det brugernavn er taget." : "Profilen blev ikke gemt. Prøv igen."); }
+  };
+}
+async function settingsSheet(){
+  const s = sheet(`<h3>Indstillinger</h3>
+    <div style="margin:0 16px 18px"><p style="font-weight:800;margin-bottom:4px">Notifikationer</p><p id="pushTxt" style="color:var(--muted);font-size:15px;margin-bottom:10px"></p><button class="btn" type="button" id="pushBtn" hidden></button></div>
+    <div style="margin:0 16px 18px"><p style="font-weight:800;margin-bottom:4px">Inviter venner</p><p style="color:var(--muted);font-size:15px;margin-bottom:10px">Send linket til Haps, så kan de oprette sig og finde dig som @${esc(me.username)}.</p><button class="btn" type="button" id="share2">Del linket</button></div>
+    <div class="formacts"><button class="btn full" type="button" id="logout">Log ud</button></div>`);
+  s.el.querySelector("#share2").onclick = shareApp;
+  s.el.querySelector("#logout").onclick = async () => { s.close(); await disablePush(true); await api.signOut(); };
+  renderPush(s.el);
+}
+
+/* ---------- push ---------- */
+const pushSupported = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+const b64ToBytes = b64 => { const p = "=".repeat((4 - b64.length % 4) % 4); const raw = atob((b64 + p).replace(/-/g,"+").replace(/_/g,"/")); return Uint8Array.from(raw, c=>c.charCodeAt(0)); };
+async function currentSub(){ if(!pushSupported()) return null; const reg = await navigator.serviceWorker.getRegistration(); return reg ? await reg.pushManager.getSubscription() : null; }
+async function enablePush(){
+  if(!pushSupported()) return false;
+  const perm = await Notification.requestPermission(); if(perm !== "granted") return false;
+  const reg = await navigator.serviceWorker.ready;
+  let sub = await reg.pushManager.getSubscription();
+  if(!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: b64ToBytes(VAPID_PUBLIC) });
+  const j = sub.toJSON();
+  await api.savePush({ user_id: me.id, endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth });
+  lsSet("hapsPushAsked","1"); return true;
+}
+async function disablePush(quiet){ try{ const sub = await currentSub(); if(sub){ await api.deletePush(sub.endpoint); await sub.unsubscribe(); } }catch(e){ if(!quiet) say("Kunne ikke slå notifikationer fra."); } }
+async function renderPush(root){
+  const txt = root.querySelector("#pushTxt"), btn = root.querySelector("#pushBtn");
+  if(DEMO){ txt.textContent = "Få besked, når nogen hapser din mad."; btn.hidden = false; btn.textContent = "Slå notifikationer til"; btn.className = "btn red"; return; }
+  if(!pushSupported()){
+    txt.textContent = /iPhone|iPad/.test(navigator.userAgent) && !isStandalone()
+      ? "På iPhone virker notifikationer kun, når Haps er lagt på hjemmeskærmen. Åbn den derfra for at slå dem til."
+      : "Notifikationer virker ikke i denne browser."; btn.hidden = true; return; }
+  if(Notification.permission === "denied"){ txt.textContent = "Notifikationer er slået fra for Haps. Slå dem til under Indstillinger → Notifikationer → Haps på telefonen."; btn.hidden = true; return; }
+  const sub = await currentSub().catch(()=>null); btn.hidden = false;
+  if(sub && Notification.permission === "granted"){ txt.textContent = "Slået til på denne telefon. Du får besked om haps, kommentarer, venner og ny aftensmad fra dine venner."; btn.textContent = "Slå notifikationer fra"; btn.className = "btn"; btn.dataset.on = "1"; }
+  else { txt.textContent = "Få besked, når nogen hapser din mad, kommenterer, eller når dine venner deler aftensmad."; btn.textContent = "Slå notifikationer til"; btn.className = "btn red"; btn.dataset.on = ""; }
+  btn.onclick = async () => { btn.disabled = true;
+    try{ if(btn.dataset.on){ await disablePush(); say("Notifikationer er slået fra."); } else if(await enablePush()) say("Notifikationer er slået til."); else say("Notifikationer blev ikke slået til."); }
+    catch(e){ say("Det lykkedes ikke. Prøv igen."); }
+    btn.disabled = false; renderPush(root); };
+}
+function pushBanner(){
+  const box = $("#pushBox");
+  if(!box || DEMO || !pushSupported() || Notification.permission !== "default" || lsGet("hapsPushAsked") || !feedIds.length) return;
+  box.innerHTML = `<div class="banner"><p><b>Vil du vide, når nogen hapser din mad?</b> Slå notifikationer til, så får du besked.</p><div class="row2"><button class="btn small red" type="button" data-pyes>Slå til</button><button class="btn small" type="button" data-pno>Ikke nu</button></div></div>`;
+  box.querySelector("[data-pno]").onclick = () => { lsSet("hapsPushAsked","1"); box.innerHTML = ""; };
+  box.querySelector("[data-pyes]").onclick = async () => { try{ say(await enablePush() ? "Notifikationer er slået til." : "Notifikationer blev ikke slået til."); }catch(e){ say("Det lykkedes ikke. Prøv under Profil → Indstillinger."); } lsSet("hapsPushAsked","1"); box.innerHTML = ""; };
+}
+if("serviceWorker" in navigator){ navigator.serviceWorker.addEventListener("message", e => { if(e.data && e.data.type === "open" && me){ const h = String(e.data.url||"").split("#")[1]; if(h) location.hash = "#"+h; } }); }
+
+/* ---------- træk ned for at opdatere ---------- */
+async function refreshFeed(){ try{ await loadFeed(); await loadNotes().catch(()=>{}); if(current === "feed") paintFeed(); }catch(e){} }
+(function pull(){
+  let y0 = null, d = 0, busy = false;
+  const box = () => current === "feed" ? $(".ptr") : null;
+  window.addEventListener("touchstart", e => { if(busy || window.scrollY > 0 || !box() || document.querySelector(".scrim,.lb")) { y0 = null; return; } y0 = e.touches[0].clientY; d = 0; }, {passive:true});
+  window.addEventListener("touchmove", e => { if(y0 === null) return; d = Math.max(0, Math.min(90, (e.touches[0].clientY - y0) * .5)); const b = box(); if(b){ b.classList.remove("anim"); b.style.height = d + "px"; b.querySelector(".spinner").style.transform = `rotate(${d*4}deg)`; } }, {passive:true});
+  window.addEventListener("touchend", async () => {
+    if(y0 === null) return; y0 = null; const b = box(); if(!b) return;
+    b.classList.add("anim");
+    if(d < 60){ b.style.height = "0px"; return; }
+    busy = true; b.style.height = "48px"; b.classList.add("busy");
+    await refreshFeed();
+    const b2 = box(); if(b2){ b2.classList.add("anim"); b2.style.height = "0px"; b2.classList.remove("busy"); } busy = false;
+  });
+})();
+
+/* ---------- login ---------- */
+function renderAuth(mode){
+  mode = mode || "in";
+  $("#tabs").hidden = true;
+  app.innerHTML = `<div class="auth"><header class="gingham"><span class="logo">Haps</span></header>
+    <p class="lead">Del din aftensmad, og se hvad dine venner spiser.</p>
+    <div class="switch" role="group"><button type="button" data-m="in" aria-pressed="${mode==="in"}">Log ind</button><button type="button" data-m="up" aria-pressed="${mode==="up"}">Opret konto</button></div>
+    <form id="af" novalidate>
+      ${mode==="up" ? `<label class="field"><span>Dit navn</span><input id="an" maxlength="40" autocomplete="name" placeholder="Fx Kasper"></label>
+      <label class="field"><span>Brugernavn</span><input id="au" maxlength="24" autocapitalize="none" autocomplete="username" placeholder="fx kasper"><small>Dine venner finder dig med det. Små bogstaver, tal, punktum og bundstreg.</small></label>` : ""}
+      <label class="field"><span>E-mail</span><input id="ae" type="email" autocomplete="email" autocapitalize="none" inputmode="email"></label>
+      ${mode!=="reset" ? `<label class="field"><span>Adgangskode</span><input id="ap" type="password" autocomplete="${mode==="up"?"new-password":"current-password"}">${mode==="up"?"<small>Mindst 6 tegn.</small>":""}</label>` : ""}
+      <p class="err" id="aerr" hidden></p>
+      <div class="formacts"><button class="btn red full" type="submit" id="ago">${mode==="up" ? "Opret konto" : mode==="reset" ? "Send link til ny adgangskode" : "Log ind"}</button>
+      ${mode==="in" ? `<button class="linkbtn" type="button" data-m="reset">Glemt adgangskode?</button>` : mode==="reset" ? `<button class="linkbtn" type="button" data-m="in">Tilbage til log ind</button>` : ""}</div>
+    </form></div>`;
+  app.querySelectorAll("[data-m]").forEach(b => b.onclick = () => renderAuth(b.dataset.m));
+  if(mode==="reset") app.querySelector(".switch").hidden = true;
+  const err = m => { const e = $("#aerr"); e.textContent = m; e.hidden = !m; };
+  $("#af").onsubmit = async e => {
+    e.preventDefault();
+    const email = $("#ae").value.trim(), pass = $("#ap") ? $("#ap").value : "";
+    const btn = $("#ago"), label = btn.textContent;
+    if(!/^\S+@\S+\.\S+$/.test(email)){ err("Skriv en gyldig e-mailadresse."); return; }
+    btn.disabled = true; btn.textContent = "Et øjeblik …"; err("");
+    try{
+      if(mode === "reset"){ await api.reset(email); err(""); say("Tjek din mail for et link til en ny adgangskode."); renderAuth("in"); return; }
+      if(mode === "up"){
+        const name = $("#an").value.trim(), un = $("#au").value.trim().toLowerCase();
+        if(!name){ throw {msg:"Skriv dit navn."}; }
+        if(!/^[a-z0-9_.æøå]{3,24}$/.test(un)) throw {msg:"Brugernavnet skal være 3–24 tegn: små bogstaver, tal, punktum eller bundstreg."};
+        if(pass.length < 6) throw {msg:"Adgangskoden skal være mindst 6 tegn."};
+        if(!(await api.usernameAvailable(un))) throw {msg:"Det brugernavn er taget. Prøv et andet."};
+        const r = await api.signUp({ email, password:pass, username:un, display_name:name });
+        if(!r.session){ err(""); say("Tjek din mail og tryk på linket for at bekræfte kontoen."); renderAuth("in"); }
+        return;
+      }
+      await api.signIn(email, pass);
+    }catch(ex){
+      btn.disabled = false; btn.textContent = label;
+      const m = ex && (ex.msg || ex.message || "");
+      err(ex.msg ? ex.msg : /invalid login/i.test(m) ? "Forkert e-mail eller adgangskode." : /already registered|already been registered/i.test(m) ? "Der findes allerede en konto med den e-mail. Log ind i stedet." : /not confirmed/i.test(m) ? "Bekræft din e-mail først. Tjek din indbakke." : /rate limit|too many/i.test(m) ? "For mange forsøg. Vent et par minutter." : "Det lykkedes ikke. Tjek internettet og prøv igen.");
+    }
+  };
+}
+function renderNewPassword(){
+  $("#tabs").hidden = true;
+  app.innerHTML = `<div class="auth"><header class="gingham"><span class="logo">Haps</span></header><p class="lead">Vælg en ny adgangskode.</p>
+    <form id="npf"><label class="field"><span>Ny adgangskode</span><input id="np" type="password" autocomplete="new-password"><small>Mindst 6 tegn.</small></label><p class="err" id="nperr" hidden></p>
+    <div class="formacts"><button class="btn red full" type="submit">Gem adgangskode</button></div></form></div>`;
+  $("#npf").onsubmit = async e => { e.preventDefault(); const v = $("#np").value; const er = $("#nperr");
+    if(v.length < 6){ er.textContent = "Mindst 6 tegn."; er.hidden = false; return; }
+    try{ await api.updatePassword(v); say("Din adgangskode er skiftet."); recovering = false; start(); }catch(ex){ er.textContent = "Det lykkedes ikke. Prøv igen."; er.hidden = false; } };
+}
+
+/* ---------- start ---------- */
+let recovering = false, started = false;
+async function start(){
+  const s = await api.session().catch(()=>null);
+  if(!s){ me = null; started = false; renderAuth(); return; }
+  if(recovering){ renderNewPassword(); return; }
+  if(started && me && me.id === s.user.id) return;
+  app.innerHTML = `<div class="wrap" style="padding-top:40vh">${loading()}</div>`;
+  try{
+    let p = (await api.profiles([s.user.id]))[0];
+    if(!p){ await new Promise(r=>setTimeout(r,800)); p = (await api.profiles([s.user.id]))[0]; }
+    if(!p) throw new Error("no profile");
+    me = p; people.set(me.id, me); started = true;
+    $("#tabs").hidden = false;
+    loadNotes().then(()=>{ if(notes.length) lastNoteId = Math.max(...notes.map(n=>n.id)); }).catch(()=>{});
+    const h = location.hash.slice(1);
+    if(!h || h === "demo" || /access_token|type=/.test(h)) history.replaceState(null, "", location.pathname + "#feed");
+    route();
+  }catch(e){
+    app.innerHTML = `<div class="wrap"><div class="empty" style="margin-top:30vh"><b>Haps kunne ikke starte</b>Tjek internettet og prøv igen.<br><button class="btn red" type="button" id="retry">Prøv igen</button></div></div>`;
+    $("#retry").onclick = start;
+  }
+}
+api.onAuth((ev) => {
+  if(ev === "PASSWORD_RECOVERY"){ recovering = true; renderNewPassword(); return; }
+  if(ev === "SIGNED_OUT"){ me = null; started = false; feedLoaded = false; feedIds = []; meals.clear(); notes = []; lastNoteId = 0; friendships = []; renderAuth(); return; }
+  if(ev === "SIGNED_IN") setTimeout(start, 0);
+});
+start();
+
+if("serviceWorker" in navigator && !DEMO){ window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
+})();
+</script>
+</body>
+</html>
