@@ -1,4 +1,4 @@
-// Haps – sender push-beskeder: haps, kommentarer, venneanmodninger og ny aftensmad fra venner.
+// Haps – sender push-beskeder: haps, kommentarer, tags, venneanmodninger og ny aftensmad fra venner.
 // Kaldes kun af databasen (trigger) med en hemmelig header.
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -42,6 +42,16 @@ Deno.serve(async (req) => {
       } else if (r.kind === "comment") {
         const { data: cm } = await sb.from("comments").select("body").eq("id", r.comment_id).maybeSingle();
         title = `${who} kommenterede ${await mealTitle(r.meal_id)}`; body = short(cm?.body || ""); url = "./#meal-" + r.meal_id;
+      } else if (r.kind === "comment_haps") {
+        title = "Haps!"; body = `${who} kunne hapse din kommentar`; url = "./#meal-" + r.meal_id; tag = "chaps-" + r.comment_id;
+      } else if (r.kind === "tag") {
+        if (r.comment_id) {
+          const { data: cm } = await sb.from("comments").select("body").eq("id", r.comment_id).maybeSingle();
+          title = `${who} har tagget dig i en kommentar`; body = short(cm?.body || "");
+        } else {
+          title = `${who} har tagget dig`; body = await mealTitle(r.meal_id);
+        }
+        url = "./#meal-" + r.meal_id;
       } else if (r.kind === "friend_request") {
         title = "Ny venneanmodning"; body = `${who} vil være venner med dig`; url = "./#venner";
       } else if (r.kind === "friend_accept") {

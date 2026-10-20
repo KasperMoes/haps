@@ -63,11 +63,25 @@ a{color:inherit;text-decoration:none}
 .who span{font-size:13px;color:var(--muted)}
 .av{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;font:800 15px var(--body);color:#fff;overflow:hidden;background:var(--c,#C27C0E)}
 .av img{width:100%;height:100%;object-fit:cover}
-.pic{display:block;width:calc(100% - 20px);margin:0 10px;border-radius:16px;overflow:hidden;background:var(--table);aspect-ratio:4/3;position:relative}
-.pic img,.pic svg{width:100%;height:100%;object-fit:cover;display:block}
-.detail .pic{aspect-ratio:auto;min-height:200px}
-.detail .pic img{height:auto;max-height:75vh;object-fit:contain;background:var(--table)}
-.detail .pic svg{aspect-ratio:4/3;height:auto}
+.pic{display:block;width:calc(100% - 20px);margin:0 10px;border-radius:16px;overflow:hidden;position:relative;background:var(--table)}
+.gal{position:relative;width:100%;max-height:78vh;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-x pan-y}
+.gal .track{display:flex;width:100%;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.gal .track::-webkit-scrollbar{display:none}
+.gal .slide{flex:0 0 100%;height:100%;scroll-snap-align:center;position:relative;
+  background:linear-gradient(100deg,#F6E9DF 30%,#FBF3EC 50%,#F6E9DF 70%) 0 0/300% 100%;animation:shimmer 1.4s linear infinite}
+.gal .slide img,.gal .slide svg{width:100%;height:100%;object-fit:cover;display:block;-webkit-user-drag:none}
+.gal .slide img{opacity:0;transition:opacity .35s ease}
+.gal .slide img.in{opacity:1}
+@keyframes shimmer{to{background-position:-150% 0}}
+.gal .count{position:absolute;top:10px;right:10px;background:rgba(42,31,26,.62);color:#fff;font:700 12px var(--body);padding:3px 9px;border-radius:99px;pointer-events:none}
+.gal .dots{position:absolute;left:50%;transform:translateX(-50%);bottom:10px;display:flex;justify-content:center;gap:6px;pointer-events:none;background:rgba(42,31,26,.4);padding:5px 8px;border-radius:99px}
+.gal .dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5)}
+.gal .dots i.on{background:#fff}
+.burst{position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(42,31,26,.25);pointer-events:none;animation:burst .9s cubic-bezier(.2,1.3,.4,1) forwards}
+.burst svg{width:70px;height:70px;fill:none;stroke:var(--red);stroke-linecap:round;stroke-linejoin:round}
+@keyframes burst{0%{transform:scale(.2) rotate(-25deg);opacity:0}25%{transform:scale(1.12) rotate(6deg);opacity:1}45%{transform:scale(1) rotate(0)}75%{opacity:1}100%{transform:scale(1.05);opacity:0}}
+a.tag{color:var(--red-ink);font-weight:700}
+.av svg{width:100%;height:100%;display:block}
 .body{padding:12px 14px 2px}
 .dish{font-family:var(--display);font-size:26px;line-height:1.08;margin-bottom:8px;overflow-wrap:anywhere}
 .badge{display:inline-flex;align-items:center;font:800 13px var(--body);padding:4px 11px;border-radius:99px;transform:rotate(-2deg)}
@@ -90,20 +104,52 @@ a{color:inherit;text-decoration:none}
 .nohaps{padding-bottom:14px}
 
 /* ---------- comments ---------- */
+.detail{padding-bottom:calc(var(--tabs) + 96px)}
 .cms{padding:4px 0 0}
-.cm{display:flex;gap:10px;padding:10px 16px}
-.cm>button{align-self:flex-start}
+.cm{display:flex;gap:10px;padding:10px 12px 10px 16px;align-items:flex-start}
+.cm>button:first-child{align-self:flex-start}
 .cm .av{width:32px;height:32px;font-size:13px}
 .cm .txt{flex:1;min-width:0}
 .cm .txt b{font-size:14.5px;font-weight:700}
-.cm .txt time{font-size:12.5px;color:var(--muted);margin-left:4px}
-.cm .txt p{font-size:15px;line-height:1.42;white-space:pre-wrap;overflow-wrap:anywhere}
-.cm .del{font-size:12.5px;color:var(--muted);font-weight:700;padding:2px 0}
+.cm .txt time{font-size:12.5px;color:var(--muted);margin-left:6px}
+.cm .txt p{font-size:15px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.cacts{display:flex;gap:14px;margin-top:2px}
+.cacts button{font-size:12.5px;color:var(--muted);font-weight:700;padding:3px 0}
+.cedit textarea{width:100%;border:2px solid var(--ink);border-radius:12px;padding:8px 10px;font-size:16px;line-height:1.4;resize:none;outline:none;margin:4px 0 2px;min-height:60px}
+.cedit .save{color:var(--red-ink)}
+.chaps{flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;color:var(--muted);padding:4px 2px;min-width:34px}
+.chaps svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.chaps span{font:700 12px var(--body)}
+.chaps.on{color:var(--red)}
+.chaps.pop svg{animation:pop .35s ease}
+.chaps[disabled]{cursor:default;opacity:.7}
 .cempty{color:var(--muted);font-size:14.5px;padding:6px 16px 10px}
-.cform{position:sticky;bottom:calc(var(--tabs) + 8px);display:flex;gap:8px;align-items:flex-end;margin:10px 12px 0;padding:8px;background:#fff;border-radius:24px;box-shadow:0 0 0 1px var(--line),0 6px 18px rgba(42,31,26,.08)}
-.cform textarea{flex:1;border:0;background:var(--soft);border-radius:18px;padding:10px 14px;resize:none;max-height:120px;font-size:16px;line-height:1.35;outline:none}
+.cbar{position:fixed;left:0;right:0;bottom:var(--tabs);z-index:25;background:linear-gradient(rgba(255,255,255,0),#fff 30%);padding:12px 12px 8px}
+.cform{max-width:536px;margin:0 auto;display:flex;gap:8px;align-items:flex-end;padding:8px;background:#fff;border-radius:24px;box-shadow:0 0 0 1px var(--line),0 6px 18px rgba(42,31,26,.1)}
+.cform .mwrap{flex:1;min-width:0}
+.cform textarea{width:100%;display:block;border:0;background:var(--soft);border-radius:18px;padding:10px 14px;resize:none;max-height:120px;font-size:16px;line-height:1.35;outline:none}
 .send{flex:none;height:40px;padding:0 16px;border-radius:99px;background:var(--red);color:#fff;font-weight:800}
 .send:disabled{opacity:.45}
+/* @tag-forslag */
+.mwrap{position:relative}
+.mbox{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;background:#fff;border-radius:16px;box-shadow:0 0 0 1px var(--line),0 10px 28px rgba(42,31,26,.16);padding:6px;max-height:240px;overflow:auto}
+.mwrap.up .mbox{top:auto;bottom:calc(100% + 10px)}
+.mbox button{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border-radius:10px;text-align:left}
+.mbox button:active,.mbox button:hover{background:var(--soft)}
+.mbox .av{width:30px;height:30px}
+.mbox b{display:block;font-size:14.5px}.mbox small{color:var(--muted);font-size:12.5px}
+/* billeder i formularen */
+.strip{display:flex;gap:8px;overflow-x:auto;padding:2px 16px 4px;margin-bottom:16px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.th{flex:none;width:112px;height:112px;border-radius:14px;overflow:hidden;position:relative;background:var(--table)}
+.th img{width:100%;height:100%;object-fit:cover}
+.th .x{position:absolute;top:5px;right:5px;width:28px;height:28px;border-radius:50%;background:rgba(42,31,26,.65);color:#fff;display:grid;place-items:center}
+.th .x .icon{width:16px;height:16px}
+.th .cover,.th .mk1{position:absolute;left:5px;bottom:5px;font:700 11px var(--body);padding:3px 8px;border-radius:99px}
+.th .cover{background:var(--red);color:#fff}
+.th .mk1{background:rgba(255,255,255,.9);color:var(--ink)}
+.th.add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--red-ink);font-weight:800;font-size:13px;border:2px dashed #E7CFC3;background:#fff}
+button.photoPick{width:calc(100% - 32px);font:inherit}
 
 /* ---------- buttons, forms ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 20px;border-radius:99px;font-weight:800;font-size:15px;background:var(--soft);color:var(--ink)}
@@ -236,6 +282,9 @@ a{color:inherit;text-decoration:none}
 /* serif-titler */
 .dish,.bar h1,.sec,.prof h2,.empty b,.locked b,.sheet h3,.install h1{font-weight:700!important;letter-spacing:-.01em}
 .bar h1{font-size:24px}.dish{font-size:23px;line-height:1.15}.prof h2{font-size:28px}
+.newpill{position:fixed;top:calc(70px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:26;display:flex;align-items:center;gap:6px;background:var(--red);color:#fff;font:700 14px var(--body);padding:9px 16px;border-radius:99px;box-shadow:0 6px 18px rgba(215,38,30,.35);animation:drop .3s ease}
+.tile .many{position:absolute;top:6px;left:6px;width:20px;height:20px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+.tile .many svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
 /* ---------- misc ---------- */
 .loading{display:flex;justify-content:center;padding:40px}
 .spinner{width:34px;height:34px;border-radius:50%;border:4px solid var(--red-soft);border-top-color:var(--red);animation:spin .8s linear infinite}
@@ -295,6 +344,7 @@ const RICON = {
   spiseligt: () => `<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5a3 3 0 0 0 6 0V3M12 3v5M12 11v10"/></svg>`
 };
 
+const PLATE_PATHS = `<path d="M2.4 3v4M4 3v4M5.6 3v4M2.4 7a1.6 1.6 0 0 0 3.2 0" stroke-width="1.1"/><path d="M4 8.6V21" stroke-width="1.4"/><circle cx="11.9" cy="12" r="5.1" stroke-width="1.4"/><circle cx="11.9" cy="12" r="3.05" stroke-width="1"/><path d="M21.9 3c-1.7 1.1-2.2 4.2-2.2 7.8h2.2z" stroke-width="1.1"/><path d="M21.9 10.8V21" stroke-width="1.4"/>`;
 const I = {
   fork:'<svg class="icon" style="width:22px;height:22px" viewBox="0 0 24 24"><path d="M2.4 3v4M4 3v4M5.6 3v4M2.4 7a1.6 1.6 0 0 0 3.2 0" stroke-width="1.1"/><path d="M4 8.6V21" stroke-width="1.4"/><circle cx="11.9" cy="12" r="5.1" stroke-width="1.4"/><circle cx="11.9" cy="12" r="3.05" stroke-width="1"/><path d="M21.9 3c-1.7 1.1-2.2 4.2-2.2 7.8h2.2z" stroke-width="1.1"/><path d="M21.9 10.8V21" stroke-width="1.4"/></svg>',
   chat:'<svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>',
@@ -335,7 +385,8 @@ function ago(ts){
 const shortAgo = ts => { const s=(Date.now()-new Date(ts))/1000; if(s<60) return "nu"; if(s<3600) return Math.floor(s/60)+" min"; if(s<86400) return Math.floor(s/3600)+" t"; if(s<7*86400) return Math.floor(s/86400)+" d"; return new Date(ts).toLocaleDateString("da-DK",{day:"numeric",month:"short"}); };
 
 /* ---------- backend ---------- */
-const MEAL_COLS = "id,user_id,title,rating,note,photo,created_at";
+const MEAL_COLS = "id,user_id,title,rating,note,photo,photos,ratios,created_at";
+const COMMENT_COLS = "id,meal_id,user_id,body,created_at,edited_at";
 const PROF_COLS = "id,username,display_name,avatar";
 function realApi(){
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:"haps-auth" } });
@@ -358,12 +409,13 @@ function realApi(){
     async mealsOf(uid){ const { data, error } = await sb.from("meals").select(MEAL_COLS).eq("user_id", uid).order("created_at",{ascending:false}).limit(500); fail(error); return data||[]; },
     async meal(id){ const { data, error } = await sb.from("meals").select(MEAL_COLS).eq("id", id).maybeSingle(); fail(error); return data; },
     async mealsByIds(ids){ if(!ids.length) return []; const { data, error } = await sb.from("meals").select(MEAL_COLS).in("id", ids); fail(error); return data||[]; },
-    async saveMeal(m){ const row = { title:m.title, rating:m.rating, note:m.note, photo:m.photo||"" };
+    async saveMeal(m){ const row = { title:m.title, rating:m.rating, note:m.note, photo:(m.photos||[])[0]||"", photos:m.photos||[], ratios:m.ratios||[] };
       if(m.id){ const { data, error } = await sb.from("meals").update(row).eq("id", m.id).select(MEAL_COLS).single(); fail(error); return data; }
       const { data, error } = await sb.from("meals").insert(row).select(MEAL_COLS).single(); fail(error); return data; },
-    async deleteMeal(m){ const { error } = await sb.from("meals").delete().eq("id", m.id); fail(error); if(m.photo) await sb.storage.from("photos").remove([m.photo]); },
+    async deleteMeal(m){ const { error } = await sb.from("meals").delete().eq("id", m.id); fail(error); const ps = photosOf(m); if(ps.length) await sb.storage.from("photos").remove(ps); },
     async uploadPhoto(path, blob){ const { error } = await sb.storage.from("photos").upload(path, blob, { contentType:"image/jpeg", upsert:false }); fail(error); },
     async removePhoto(path){ if(path) await sb.storage.from("photos").remove([path]); },
+    async removePhotos(paths){ if(paths.length) await sb.storage.from("photos").remove(paths); },
     async photoUrls(paths){
       const need = paths.filter(p=>p && !urlCache.has(p));
       if(need.length){ const { data, error } = await sb.storage.from("photos").createSignedUrls(need, 60*60*6); fail(error); (data||[]).forEach(d=>{ if(d.signedUrl) urlCache.set(d.path, d.signedUrl); }); }
@@ -375,8 +427,25 @@ function realApi(){
     async addHaps(mealId, myId){ const { error } = await sb.from("haps").insert({ meal_id:mealId, user_id:myId }); if(error && error.code!=="23505") fail(error); },
     async removeHaps(mealId, myId){ const { error } = await sb.from("haps").delete().eq("meal_id", mealId).eq("user_id", myId); fail(error); },
     async commentCounts(ids){ if(!ids.length) return {}; const { data, error } = await sb.from("comments").select("meal_id").in("meal_id", ids); fail(error); const o={}; (data||[]).forEach(r=>{ o[r.meal_id]=(o[r.meal_id]||0)+1; }); return o; },
-    async comments(mealId){ const { data, error } = await sb.from("comments").select("id,meal_id,user_id,body,created_at").eq("meal_id", mealId).order("created_at"); fail(error); return data||[]; },
-    async addComment(mealId, body, myId){ const { data, error } = await sb.from("comments").insert({ meal_id:mealId, body, user_id:myId }).select("id,meal_id,user_id,body,created_at").single(); fail(error); return data; },
+    async comments(mealId){ const { data, error } = await sb.from("comments").select(COMMENT_COLS).eq("meal_id", mealId).order("created_at"); fail(error); return data||[]; },
+    async addComment(mealId, body, myId){ const { data, error } = await sb.from("comments").insert({ meal_id:mealId, body, user_id:myId }).select(COMMENT_COLS).single(); fail(error); return data; },
+    async updateComment(id, body){ const { data, error } = await sb.from("comments").update({ body }).eq("id", id).select(COMMENT_COLS).single(); fail(error); return data; },
+    async commentHaps(ids){ if(!ids.length) return []; const { data, error } = await sb.from("comment_haps").select("comment_id,user_id").in("comment_id", ids); if(error) return []; return data||[]; },
+    async addCommentHaps(id, myId){ const { error } = await sb.from("comment_haps").insert({ comment_id:id, user_id:myId }); if(error && error.code!=="23505") fail(error); },
+    async removeCommentHaps(id, myId){ const { error } = await sb.from("comment_haps").delete().eq("comment_id", id).eq("user_id", myId); fail(error); },
+    async friendsUsernames(ids){ return this.profiles(ids); },
+    async deleteAccount(myId){
+      for(const bucket of ["photos","avatars"]){
+        for(let i=0;i<20;i++){ const { data } = await sb.storage.from(bucket).list(myId, { limit:100 }); const names = (data||[]).map(f=>`${myId}/${f.name}`); if(!names.length) break; await sb.storage.from(bucket).remove(names); }
+      }
+      const { error } = await sb.rpc("delete_my_account"); fail(error);
+      await sb.auth.signOut({ scope:"local" }).catch(()=>{}); urlCache.clear();
+    },
+    live(cb){
+      const ch = sb.channel("haps-live");
+      ["haps","comment_haps","comments","notifications","meals"].forEach(t => ch.on("postgres_changes", { event:"*", schema:"public", table:t }, p => cb(t, p.eventType, p.new||{}, p.old||{})));
+      ch.subscribe(); return () => sb.removeChannel(ch);
+    },
     async deleteComment(id){ const { error } = await sb.from("comments").delete().eq("id", id); fail(error); },
     async friendships(){ const { data, error } = await sb.from("friendships").select("*"); fail(error); return data||[]; },
     async request(myId, otherId){ const { error } = await sb.from("friendships").insert({ requester:myId, addressee:otherId }); fail(error); },
@@ -398,21 +467,24 @@ function demoApi(){
   ["karry","lasagne","flaesk","frikadeller","suppe","tarteletter"].forEach(k=>imgs["d/"+k]=svgUrl(k));
   let friends = [{id:1,requester:"u1",addressee:"u2",status:"accepted"},{id:2,requester:"u3",addressee:"u1",status:"accepted"},{id:3,requester:"u4",addressee:"u1",status:"accepted"},{id:4,requester:"u6",addressee:"u1",status:"pending"}], fid=10;
   let meals = [
-    {id:"m1",user_id:"u2",title:"Boller i karry med ris",rating:"anbefales",note:"Mormors opskrift, bare med lidt mere karry. Børnene tog to portioner.",photo:"d/karry",created_at:t(1.5)},
-    {id:"m2",user_id:"u3",title:"Mandagslasagne",rating:"spiseligt",note:"Rester fra søndag og den sidste ost i køleskabet. Den gik.",photo:"d/lasagne",created_at:t(3)},
-    {id:"m3",user_id:"u1",title:"Frikadeller med kartoffelsalat",rating:"anbefales",note:"Første gang med svin og kalv halv-halv. Kartoffelsalaten var bedre end frikadellerne.",photo:"d/frikadeller",created_at:t(22)},
-    {id:"m4",user_id:"u4",title:"Stegt flæsk med persillesovs",rating:"anbefales",note:"Sprødt hele vejen igennem. Ovnen på 220 og ingen tålmodighed.",photo:"d/flaesk",created_at:t(27)},
-    {id:"m5",user_id:"u1",title:"Linsesuppe",rating:"spiseligt",note:"For lidt salt, men brødet reddede den.",photo:"d/suppe",created_at:t(70)},
-    {id:"m6",user_id:"u1",title:"Tarteletter",rating:"anbefales",note:"",photo:"d/tarteletter",created_at:t(140)},
-    {id:"m7",user_id:"u1",title:"Tirsdagspasta",rating:"spiseligt",note:"",photo:"",created_at:t(190)}
+    {id:"m1",user_id:"u2",title:"Boller i karry med ris",rating:"anbefales",note:"Mormors opskrift, bare med lidt mere karry. Børnene tog to portioner. @kasper du må komme og smage!",photo:"d/karry",photos:["d/karry","d/suppe"],ratios:[1,1],created_at:t(1.5)},
+    {id:"m2",user_id:"u3",title:"Mandagslasagne",rating:"spiseligt",note:"Rester fra søndag og den sidste ost i køleskabet. Den gik.",photo:"d/lasagne",photos:["d/lasagne"],ratios:[1.333],created_at:t(3)},
+    {id:"m3",user_id:"u1",title:"Frikadeller med kartoffelsalat",rating:"anbefales",note:"Første gang med svin og kalv halv-halv. Kartoffelsalaten var bedre end frikadellerne.",photo:"d/frikadeller",photos:["d/frikadeller","d/tarteletter","d/flaesk"],ratios:[0.8,1,1],created_at:t(22)},
+    {id:"m4",user_id:"u4",title:"Stegt flæsk med persillesovs",rating:"anbefales",note:"Sprødt hele vejen igennem. Ovnen på 220 og ingen tålmodighed.",photo:"d/flaesk",photos:["d/flaesk"],ratios:[0.8],created_at:t(27)},
+    {id:"m5",user_id:"u1",title:"Linsesuppe",rating:"spiseligt",note:"For lidt salt, men brødet reddede den.",photo:"d/suppe",photos:["d/suppe"],ratios:[1],created_at:t(70)},
+    {id:"m6",user_id:"u1",title:"Tarteletter",rating:"anbefales",note:"",photo:"d/tarteletter",photos:["d/tarteletter"],ratios:[1.333],created_at:t(140)},
+    {id:"m7",user_id:"u1",title:"Tirsdagspasta",rating:"spiseligt",note:"",photo:"",photos:[],ratios:[],created_at:t(190)}
   ];
   let haps = [{meal_id:"m1",user_id:"u1"},{meal_id:"m1",user_id:"u3"},{meal_id:"m1",user_id:"u4"},{meal_id:"m3",user_id:"u3"},{meal_id:"m3",user_id:"u2"},{meal_id:"m3",user_id:"u4"},{meal_id:"m4",user_id:"u2"},{meal_id:"m2",user_id:"u4"}];
   let cid=100, comments = [
     {id:1,meal_id:"m3",user_id:"u2",body:"Hvad kom der i kartoffelsalaten? Den ser god ud.",created_at:t(2)},
-    {id:2,meal_id:"m3",user_id:"u1",body:"Creme fraiche, purløg og lidt sennep.",created_at:t(1)},
+    {id:2,meal_id:"m3",user_id:"u1",body:"Creme fraiche, purløg og lidt sennep. @mette du skal prøve den!",created_at:t(1),edited_at:t(.9)},
     {id:3,meal_id:"m1",user_id:"u3",body:"Den skal jeg have opskriften på!",created_at:t(1)},
     {id:4,meal_id:"m2",user_id:"u2",body:"Mandagslasagne er den bedste lasagne.",created_at:t(2)}];
+  let chaps = [{comment_id:1,user_id:"u1"},{comment_id:2,user_id:"u2"},{comment_id:2,user_id:"u4"}];
   let nid=50, notes = [
+    {id:6,user_id:"u1",actor:"u2",kind:"tag",meal_id:"m1",created_at:t(1.4),read_at:null},
+    {id:7,user_id:"u1",actor:"u4",kind:"comment_haps",meal_id:"m3",comment_id:2,created_at:t(.5),read_at:null},
     {id:1,user_id:"u1",actor:"u3",kind:"haps",meal_id:"m3",created_at:t(.05),read_at:null},
     {id:2,user_id:"u1",actor:"u2",kind:"comment",meal_id:"m3",comment_id:1,created_at:t(2),read_at:null},
     {id:3,user_id:"u1",actor:"u6",kind:"friend_request",created_at:t(5),read_at:null},
@@ -436,11 +508,12 @@ function demoApi(){
     async mealsOf(uid){ return vis(uid) ? meals.filter(m=>m.user_id===uid).sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(m=>({...m})) : []; },
     async meal(id){ const m = meals.find(m=>m.id===id); return m && vis(m.user_id) ? {...m} : null; },
     async mealsByIds(ids){ return meals.filter(m=>ids.includes(m.id)).map(m=>({...m})); },
-    async saveMeal(m){ if(m.id){ const x = meals.find(y=>y.id===m.id); Object.assign(x, {title:m.title,rating:m.rating,note:m.note,photo:m.photo||""}); return {...x}; }
-      const x = {id:"m"+Date.now(), user_id:"u1", title:m.title, rating:m.rating, note:m.note, photo:m.photo||"", created_at:new Date().toISOString()}; meals.push(x); return {...x}; },
+    async saveMeal(m){ const f = {title:m.title,rating:m.rating,note:m.note,photo:(m.photos||[])[0]||"",photos:m.photos||[],ratios:m.ratios||[]};
+      if(m.id){ const x = meals.find(y=>y.id===m.id); Object.assign(x, f); return {...x}; }
+      const x = {id:"m"+Date.now(), user_id:"u1", ...f, created_at:new Date().toISOString()}; meals.push(x); return {...x}; },
     async deleteMeal(m){ meals = meals.filter(x=>x.id!==m.id); },
     async uploadPhoto(path, blob){ imgs[path] = URL.createObjectURL(blob); },
-    async removePhoto(){},
+    async removePhoto(){}, async removePhotos(){},
     async photoUrls(paths){ const o={}; paths.forEach(p=>{ if(imgs[p]) o[p]=imgs[p]; }); return o; },
     async uploadAvatar(path, blob){ imgs["av:"+path] = URL.createObjectURL(blob); },
     async removeAvatar(){},
@@ -452,6 +525,12 @@ function demoApi(){
     async comments(mid){ return comments.filter(c=>c.meal_id===mid).map(c=>({...c})); },
     async addComment(mid, body, uid){ const c={id:cid++,meal_id:mid,user_id:uid,body,created_at:new Date().toISOString()}; comments.push(c); return {...c}; },
     async deleteComment(id){ comments = comments.filter(c=>c.id!==id); },
+    async updateComment(id, body){ const c = comments.find(x=>x.id===id); c.body = body; c.edited_at = new Date().toISOString(); return {...c}; },
+    async commentHaps(ids){ return chaps.filter(h=>ids.includes(h.comment_id)); },
+    async addCommentHaps(id, u){ if(!chaps.some(h=>h.comment_id===id&&h.user_id===u)) chaps.push({comment_id:id,user_id:u}); },
+    async removeCommentHaps(id, u){ chaps = chaps.filter(h=>!(h.comment_id===id&&h.user_id===u)); },
+    async deleteAccount(){ session=null; try{ localStorage.removeItem("hapsDemoIn"); }catch(e){} },
+    live(){ return ()=>{}; },
     async friendships(){ return friends.map(f=>({...f})); },
     async request(a,b){ friends.push({id:fid++,requester:a,addressee:b,status:"pending"}); },
     async accept(id){ friends.find(f=>f.id===id).status="accepted"; notes = notes.filter(n=>!(n.kind==="friend_request" && n.actor===friends.find(f=>f.id===id).requester)); },
@@ -489,10 +568,19 @@ const firstName = p => nameOf(p).split(/\s+/)[0];
 const gen = n => /[sxz]$/i.test(n) ? n + "'" : n + "s";
 
 const COLORS = ["#B5476A","#2E7DAF","#C27C0E","#4E8A3E","#7056B5","#B85A1F","#1F7A73","#9C3D8C"];
-const colorOf = id => { let h=0; for(const c of String(id)) h=(h*31+c.charCodeAt(0))|0; return COLORS[Math.abs(h)%COLORS.length]; };
-const initials = p => nameOf(p).trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();
+const hashOf = id => { let h=0; for(const c of String(id)) h=(h*31+c.charCodeAt(0))|0; return Math.abs(h); };
+const colorOf = id => COLORS[hashOf(id)%COLORS.length];
 const avatarUrl = path => !path ? "" : (api.avatarUrl ? api.avatarUrl(path) : `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}`);
-const av = p => { const u = avatarUrl(p.avatar); return `<span class="av" style="--c:${colorOf(p.id)}" aria-hidden="true">${u ? `<img src="${esc(u)}" alt="">` : esc(initials(p))}</span>`; };
+// Standard-profilbillede: en lille tegnet tallerken i personens farve
+const FOODS = [
+  '<circle cx="17" cy="19" r="3.2" fill="#6E3F22"/><circle cx="22.5" cy="17.5" r="3.2" fill="#6E3F22"/><circle cx="21" cy="23" r="3.2" fill="#6E3F22"/><path d="M24 21c3-1 6 1 5 4s-4 3-6 1z" fill="#F0E2A8"/>',
+  '<path d="M14 21c0-4 3-7 7-7s7 3 7 7c0 3-3 6-7 6s-7-3-7-6z" fill="#F4EFE0"/><path d="M21 14c4 0 7 3 7 7s-3 6-7 6c1-4 1-9 0-13z" fill="#E3A92C"/><circle cx="24" cy="19" r="1.6" fill="#F1E3C6"/><circle cx="24.5" cy="23" r="1.6" fill="#F1E3C6"/>',
+  '<rect x="15" y="15" width="12" height="11" rx="2" fill="#C8572E" transform="rotate(-8 21 20)"/><rect x="15" y="15" width="12" height="8" rx="2" fill="#EFC66E" transform="rotate(-8 21 20)"/><circle cx="27" cy="25" r="2.6" fill="#6FA83A"/>',
+  '<circle cx="20" cy="20" r="7.4" fill="#D9822B"/><path d="M16 19.5c2.4-2.4 5.6-2.4 8 0" stroke="#F6E6C8" stroke-width="1.2" fill="none" stroke-linecap="round"/>',
+  '<circle cx="17.5" cy="18" r="3.6" fill="#D9A55A"/><circle cx="17.5" cy="18" r="2.4" fill="#F2E7CF"/><circle cx="23.5" cy="18" r="3.6" fill="#D9A55A"/><circle cx="23.5" cy="18" r="2.4" fill="#F2E7CF"/><circle cx="20.5" cy="23.5" r="3.6" fill="#D9A55A"/><circle cx="20.5" cy="23.5" r="2.4" fill="#F2E7CF"/>'
+];
+const defaultAvatar = id => `<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" fill="${colorOf(id)}"/><circle cx="20.6" cy="21.2" r="16" fill="rgba(0,0,0,.14)"/><circle cx="20" cy="20" r="16" fill="#FDFCF8"/><circle cx="20" cy="20" r="12" fill="#F3EFE6"/><g transform="translate(20 20) scale(1.3) translate(-20.5 -20.5)">${FOODS[hashOf(id+"f")%FOODS.length]}</g></svg>`;
+const av = p => { const u = avatarUrl(p.avatar); return `<span class="av" style="--c:${colorOf(p.id)}" aria-hidden="true">${u ? `<img src="${esc(u)}" alt="">` : defaultAvatar(p.id)}</span>`; };
 
 function rel(otherId){
   const f = friendships.find(f => (f.requester===me.id && f.addressee===otherId) || (f.addressee===me.id && f.requester===otherId));
@@ -515,31 +603,56 @@ async function loadExtras(ids){
   await ensurePeople(hs.map(h=>h.user_id));
 }
 
+/* ---------- tekst med @tags ---------- */
+const TAG_RE = /(^|[^a-z0-9_.æøå@])@([a-z0-9_.æøå]{3,24})/gi;
+const richText = t => esc(t).replace(TAG_RE, (all, pre, name) => { const n = name.replace(/\.+$/,""), rest = name.slice(n.length); return `${pre}<a class="tag" href="#u-${n.toLowerCase()}">@${n}</a>${rest}`; });
+
 /* ---------- billeder ---------- */
+const photosOf = m => (m.photos && m.photos.length) ? m.photos : (m.photo ? [m.photo] : []);
+const clampRatio = r => Math.min(1.91, Math.max(0.8, r || 4/3));
+const ratioOf = m => clampRatio((m.ratios && m.ratios[0]) || (photosOf(m).length ? 4/3 : 4/3));
 async function hydrate(root){
-  const els = [...root.querySelectorAll("img[data-photo]")]; if(!els.length) return;
+  wireGalleries(root);
+  const els = [...root.querySelectorAll("img[data-photo]:not([src])")]; if(!els.length) return;
   let urls = {}; try{ urls = await api.photoUrls([...new Set(els.map(e=>e.dataset.photo))]); }catch(e){}
   els.forEach(el => { const u = urls[el.dataset.photo];
     const fallback = () => { const s = document.createElement("span"); s.innerHTML = plateSVG(el.dataset.photo); el.replaceWith(s.firstChild); };
-    if(u){ el.addEventListener("error", fallback, {once:true}); el.src = u; } else fallback(); });
+    if(u){ el.addEventListener("error", fallback, {once:true}); el.addEventListener("load", () => el.classList.add("in"), {once:true}); el.src = u; if(el.complete && el.naturalWidth) el.classList.add("in"); } else fallback(); });
 }
-const photo = (m, alt) => m.photo ? `<img data-photo="${esc(m.photo)}" alt="${esc(alt||m.title)}" loading="lazy">` : plateSVG(m.id);
+// Første billede (til miniaturer)
+const photo = (m, alt) => { const ps = photosOf(m); return ps.length ? `<img data-photo="${esc(ps[0])}" alt="${esc(alt ?? m.title)}" loading="lazy">` : plateSVG(m.id); };
+// Galleri: et eller flere billeder, man swiper imellem
+function gallery(m){
+  const ps = photosOf(m);
+  const slides = ps.length ? ps.map((p,i) => `<div class="slide"><img data-photo="${esc(p)}" alt="${esc(m.title)}${ps.length>1?` – billede ${i+1} af ${ps.length}`:""}" ${i>1?'loading="lazy"':""} draggable="false"></div>`).join("") : `<div class="slide">${plateSVG(m.id)}</div>`;
+  return `<div class="gal" data-gal style="aspect-ratio:${ratioOf(m).toFixed(3)}"><div class="track">${slides}</div>${ps.length>1 ? `<span class="count">1/${ps.length}</span><div class="dots">${ps.map((_,i)=>`<i${i?"":' class="on"'}></i>`).join("")}</div>` : ""}</div>`;
+}
+function wireGalleries(root){
+  root.querySelectorAll("[data-gal]").forEach(g => {
+    if(g.dataset.wired) return; g.dataset.wired = "1";
+    const tr = g.querySelector(".track"), dots = [...g.querySelectorAll(".dots i")], cnt = g.querySelector(".count");
+    if(!dots.length) return;
+    tr.addEventListener("scroll", () => { const i = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth)); dots.forEach((d,k)=>d.classList.toggle("on", k===i)); cnt.textContent = `${i+1}/${dots.length}`; }, {passive:true});
+  });
+}
 
 async function shrink(file, max){
+  let cv;
   try{
     const bmp = await createImageBitmap(file, {imageOrientation:"from-image"});
     const k = Math.min(1, max/Math.max(bmp.width, bmp.height));
-    const cv = document.createElement("canvas"); cv.width = Math.round(bmp.width*k); cv.height = Math.round(bmp.height*k);
+    cv = document.createElement("canvas"); cv.width = Math.round(bmp.width*k); cv.height = Math.round(bmp.height*k);
     cv.getContext("2d").drawImage(bmp, 0, 0, cv.width, cv.height);
-    return await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error("toBlob")),"image/jpeg",0.85));
   }catch(e){
     const im = new Image(); const url = URL.createObjectURL(file);
     await new Promise((res,rej)=>{ im.onload=res; im.onerror=rej; im.src=url; });
     const k = Math.min(1, max/Math.max(im.naturalWidth, im.naturalHeight));
-    const cv = document.createElement("canvas"); cv.width = Math.round(im.naturalWidth*k); cv.height = Math.round(im.naturalHeight*k);
+    cv = document.createElement("canvas"); cv.width = Math.round(im.naturalWidth*k); cv.height = Math.round(im.naturalHeight*k);
     cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
-    return await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error("toBlob")),"image/jpeg",0.85));
   }
+  const blob = await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error("toBlob")),"image/jpeg",0.85));
+  blob.ratio = cv.width / cv.height;
+  return blob;
 }
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2));
 
@@ -584,10 +697,10 @@ function postHTML(m, detail){
   const p = personOf(m.user_id), hs = hapsBy.get(m.id) || [], mine = m.user_id === me.id, on = hs.includes(me.id), cc = ccount[m.id] || 0;
   return `<article class="post" data-meal="${esc(m.id)}">
     <button class="ph" type="button" data-go="${esc("#u-"+p.username)}">${av(p)}<span class="who"><b>${esc(mine ? "Dig" : nameOf(p))}</b><span>${esc(ago(m.created_at))}</span></span></button>
-    ${detail ? `<button class="pic" type="button" data-zoom aria-label="Vis billedet i fuld størrelse">${photo(m)}</button>` : `<a class="pic" href="#meal-${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}</a>`}
-    <div class="body">${detail ? `<h2 class="dish">${esc(m.title)}</h2>` : `<a href="#meal-${esc(m.id)}" style="color:inherit;text-decoration:none"><h2 class="dish">${esc(m.title)}</h2></a>`}
+    <div class="pic">${gallery(m)}</div>
+    <div class="body">${detail ? `<h2 class="dish">${esc(m.title)}</h2>` : `<a href="#meal-${esc(m.id)}"><h2 class="dish">${esc(m.title)}</h2></a>`}
       <span class="badge ${esc(m.rating)}">${RICON[m.rating] ? RICON[m.rating](m.rating==="anbefales"?"#2F7D32":"#F2B705") : ""}${RATING[m.rating]||""}</span>
-      ${m.note ? `<p class="note">${esc(m.note)}</p>` : ""}</div>
+      ${m.note ? `<p class="note">${richText(m.note)}</p>` : ""}</div>
     <div class="acts">
       <button class="haps ${on?"on":""}" type="button" data-haps ${mine?"disabled":""} aria-pressed="${on}" aria-label="${mine?`${hs.length} haps`:(on?"Fjern dit haps":"Haps")}">${I.fork}Haps${hs.length?` ${hs.length}`:""}</button>
       ${detail ? "" : `<a class="cbtn" href="#meal-${esc(m.id)}" aria-label="${cc} kommentarer">${I.chat}${cc||""}</a>`}
@@ -597,24 +710,30 @@ function postHTML(m, detail){
   </article>`;
 }
 
-async function toggleHaps(mealId, btn){
+async function toggleHaps(mealId, force){
   const hs = hapsBy.get(mealId) || []; hapsBy.set(mealId, hs);
   const on = hs.includes(me.id);
+  if(force && on) return;
   if(on) hs.splice(hs.indexOf(me.id),1); else hs.push(me.id);
   refreshPost(mealId, !on);
   try{ if(on) await api.removeHaps(mealId, me.id); else await api.addHaps(mealId, me.id); }
   catch(e){ if(on) hs.push(me.id); else hs.splice(hs.indexOf(me.id),1); refreshPost(mealId); say("Det lykkedes ikke. Tjek internettet og prøv igen."); }
 }
+// Opdatér et opslag uden at genindlæse billederne
 function refreshPost(mealId, popped){
   document.querySelectorAll(`.post[data-meal="${CSS.escape(mealId)}"]`).forEach(el => {
     const detail = !!el.closest(".detail"), m = meals.get(mealId); if(!m) return;
-    const keepImg = el.querySelector(".pic img[src]");
     const tmp = document.createElement("div"); tmp.innerHTML = postHTML(m, detail);
     const neu = tmp.firstElementChild;
-    if(keepImg){ const slot = neu.querySelector(".pic img"); if(slot){ slot.replaceWith(keepImg); } }
-    el.replaceWith(neu); hydrate(neu);
-    if(popped){ const b = neu.querySelector("[data-haps]"); b.classList.add("pop"); }
+    neu.querySelector(".pic").replaceWith(el.querySelector(".pic"));
+    el.replaceWith(neu);
+    if(popped){ const b = neu.querySelector("[data-haps]"); if(b) b.classList.add("pop"); }
   });
+}
+function burst(gal){
+  const b = document.createElement("span"); b.className = "burst"; b.setAttribute("aria-hidden","true");
+  b.innerHTML = `<svg viewBox="0 0 24 24">${PLATE_PATHS}</svg>`;
+  gal.appendChild(b); setTimeout(() => b.remove(), 950);
 }
 function whoSheet(mealId){
   const ids = (hapsBy.get(mealId) || []).slice().reverse();
@@ -622,15 +741,34 @@ function whoSheet(mealId){
   s.el.addEventListener("click", e => { const g = e.target.closest("[data-go]"); if(g){ s.close(); location.hash = g.dataset.go; } });
 }
 
-// Klik i opslag (fælles for alle sider)
+// Klik i opslag (fælles for alle sider). Dobbelttryk på billedet = haps.
+let tapT = null, tapGal = null, tapAt = 0;
 app.addEventListener("click", e => {
   const go = e.target.closest("[data-go]"); if(go){ location.hash = go.dataset.go; return; }
   const post = e.target.closest(".post"); if(!post) return;
   const id = post.dataset.meal;
-  if(e.target.closest("[data-haps]")){ const b = e.target.closest("[data-haps]"); if(!b.disabled) toggleHaps(id, b); return; }
+  if(e.target.closest("[data-haps]")){ const b = e.target.closest("[data-haps]"); if(!b.disabled) toggleHaps(id); return; }
   if(e.target.closest("[data-who]")){ whoSheet(id); return; }
-  const z = e.target.closest("[data-zoom]"); if(z){ const im = z.querySelector("img[src]"); if(im) lightbox(im.src, im.alt); }
+  const gal = e.target.closest("[data-gal]");
+  if(gal){
+    const now = Date.now();
+    if(tapGal === gal && now - tapAt < 320){
+      clearTimeout(tapT); tapT = null; tapGal = null;
+      burst(gal);
+      const m = meals.get(id); if(m && m.user_id !== me.id) toggleHaps(id, true);
+      return;
+    }
+    tapGal = gal; tapAt = now; clearTimeout(tapT);
+    const detail = !!post.closest(".detail");
+    const tr = gal.querySelector(".track"), idx = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth));
+    tapT = setTimeout(() => {
+      tapT = null; tapGal = null;
+      if(!detail){ location.hash = "#meal-" + id; return; }
+      const im = tr.querySelectorAll(".slide")[idx]?.querySelector("img[src]"); if(im) lightbox(im.src, im.alt);
+    }, 320);
+  }
 });
+app.addEventListener("dblclick", e => { if(e.target.closest("[data-gal]")) e.preventDefault(); });
 
 /* ---------- navigation ---------- */
 let current = "", navDepth = 0;
@@ -644,6 +782,7 @@ async function route(){
   if(!me) return;
   const h = decodeURIComponent(location.hash.slice(1)) || "feed";
   current = h;
+  if(!h.startsWith("meal-")) mealState = null;
   window.scrollTo(0,0);
   if(h === "feed"){ setTab("feed"); return renderFeed(); }
   if(h === "venner"){ setTab("venner"); return renderFriends(); }
@@ -694,105 +833,221 @@ function paintFeed(){
 }
 
 /* ---------- ét opslag ---------- */
+let mealState = null;   // { m, cs, chaps: Map(commentId -> [userId]) }
+async function loadMealComments(id){
+  const cs = await api.comments(id);
+  const ch = await api.commentHaps(cs.map(c=>c.id)).catch(()=>[]);
+  const chaps = new Map(cs.map(c => [c.id, []]));
+  ch.forEach(h => { if(chaps.has(h.comment_id)) chaps.get(h.comment_id).push(h.user_id); });
+  await ensurePeople([...cs.map(c=>c.user_id), ...ch.map(h=>h.user_id)]);
+  ccount[id] = cs.length;
+  return { cs, chaps };
+}
 async function renderMeal(id){
   app.innerHTML = `<div class="wrap detail"><div class="bar">${backBtn()}<h1></h1></div><div id="mealBox">${loading()}</div></div>`;
-  let m;
   try{
-    m = await api.meal(id);
+    const m = await api.meal(id);
     if(!m){ $("#mealBox").innerHTML = `<div class="empty"><b>Opslaget findes ikke</b>Det er måske slettet, eller I er ikke venner længere.</div>`; return; }
     meals.set(m.id, m);
-    const [cs] = await Promise.all([api.comments(id), loadExtras([id])]);
-    await ensurePeople([m.user_id, ...cs.map(c=>c.user_id)]);
-    ccount[id] = cs.length;
+    const [{ cs, chaps }] = await Promise.all([loadMealComments(id), loadExtras([id]), ensurePeople([m.user_id])]);
     if(current !== "meal-"+id) return;
-    paintMeal(m, cs);
+    mealState = { m, cs, chaps };
+    paintMeal(true);
   }catch(e){ if(current === "meal-"+id) $("#mealBox").innerHTML = `<div class="empty"><b>Opslaget kunne ikke hentes</b>Tjek internettet og prøv igen.</div>`; }
 }
-function paintMeal(m, cs){
-  const box = $("#mealBox");
-  const canDel = c => c.user_id === me.id || m.user_id === me.id;
-  box.innerHTML = postHTML(m, true) + `<div class="cms" id="cms">${cs.length ? cs.map(c=>{ const p = personOf(c.user_id); return `<div class="cm" data-c="${c.id}"><button type="button" data-go="#u-${esc(p.username)}" aria-label="${esc(nameOf(p))}">${av(p)}</button><div class="txt"><b>${esc(c.user_id===me.id?"Dig":nameOf(p))}</b><time>${esc(shortAgo(c.created_at))}</time><p>${esc(c.body)}</p>${canDel(c)?`<button class="del" type="button" data-delc="${c.id}">Slet</button>`:""}</div></div>`; }).join("") : `<p class="cempty">Ingen kommentarer endnu.</p>`}</div>
-    <form class="cform" id="cform"><textarea rows="1" maxlength="1000" placeholder="Skriv en kommentar …" aria-label="Kommentar"></textarea><button class="send" type="submit" disabled>Send</button></form>`;
-  hydrate(box);
+// Hent kommentarer igen (live) uden at røre billederne eller det, man er ved at skrive
+async function refreshComments(id){
+  if(!mealState || mealState.m.id !== id || current !== "meal-"+id) return;
+  try{ const { cs, chaps } = await loadMealComments(id); if(!mealState || mealState.m.id !== id) return; mealState.cs = cs; mealState.chaps = chaps; paintComments(); refreshPost(id); }catch(e){}
+}
+function commentHTML(c){
+  const { m, chaps } = mealState, p = personOf(c.user_id), mine = c.user_id === me.id;
+  const hs = chaps.get(c.id) || [], on = hs.includes(me.id);
+  const canDel = mine || m.user_id === me.id;
+  return `<div class="cm" data-c="${c.id}"><button type="button" data-go="#u-${esc(p.username)}" aria-label="${esc(nameOf(p))}">${av(p)}</button>
+    <div class="txt"><b>${esc(mine?"Dig":nameOf(p))}</b><time>${esc(shortAgo(c.created_at))}${c.edited_at?" · redigeret":""}</time>
+      <p>${richText(c.body)}</p>
+      <div class="cacts">${mine ? `<button type="button" data-editc="${c.id}">Ret</button>` : ""}${canDel ? `<button type="button" data-delc="${c.id}">Slet</button>` : ""}</div></div>
+    <button class="chaps ${on?"on":""}" type="button" data-chaps="${c.id}" ${mine?"disabled":""} aria-pressed="${on}" aria-label="${mine?`${hs.length} haps`:(on?"Fjern dit haps":"Hap kommentaren")}"><svg viewBox="0 0 24 24">${PLATE_PATHS}</svg>${hs.length?`<span>${hs.length}</span>`:""}</button></div>`;
+}
+function paintComments(){
+  const el = $("#cms"); if(!el || !mealState) return;
+  const editing = el.querySelector(".cedit"); if(editing) return;   // forstyr ikke, mens man retter
+  const { cs } = mealState;
+  el.innerHTML = cs.length ? cs.map(commentHTML).join("") : `<p class="cempty">Ingen kommentarer endnu. Skriv den første.</p>`;
+}
+function paintMeal(first){
+  const box = $("#mealBox"), { m } = mealState;
+  box.innerHTML = postHTML(m, true) + `<div class="cms" id="cms"></div>
+    <div class="cbar"><form class="cform" id="cform"><div class="mwrap up"><textarea rows="1" maxlength="1000" placeholder="Skriv en kommentar …" aria-label="Kommentar"></textarea></div><button class="send" type="submit" disabled>Send</button></form></div>`;
+  paintComments(); hydrate(box);
   const f = $("#cform"), ta = f.querySelector("textarea"), send = f.querySelector(".send");
-  ta.addEventListener("input", () => { send.disabled = !ta.value.trim(); ta.style.height = "auto"; ta.style.height = Math.min(120, ta.scrollHeight) + "px"; });
+  mentionize(ta, m.user_id);
+  const grow = () => { send.disabled = !ta.value.trim(); ta.style.height = "auto"; ta.style.height = Math.min(120, ta.scrollHeight) + "px"; };
+  ta.addEventListener("input", grow);
   f.onsubmit = async e => {
     e.preventDefault(); const body = ta.value.trim(); if(!body) return;
     send.disabled = true;
-    try{ const c = await api.addComment(m.id, body, me.id); cs.push(c); ccount[m.id] = cs.length; paintMeal(m, cs); window.scrollTo(0, document.body.scrollHeight); }
+    try{ const c = await api.addComment(m.id, body, me.id); if(!mealState.cs.some(x=>x.id===c.id)) mealState.cs.push(c); mealState.chaps.set(c.id, []); ccount[m.id] = mealState.cs.length;
+      ta.value = ""; grow(); paintComments(); refreshPost(m.id); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }
     catch(err){ send.disabled = false; say("Kommentaren blev ikke sendt. Prøv igen."); }
   };
-  box.querySelectorAll("[data-delc]").forEach(b => b.onclick = async () => {
+}
+// Kommentar-knapper: hap, ret, slet
+app.addEventListener("click", async e => {
+  if(!mealState) return;
+  const hb = e.target.closest("[data-chaps]");
+  if(hb){
+    if(hb.disabled) return;
+    const id = +hb.dataset.chaps, hs = mealState.chaps.get(id) || []; mealState.chaps.set(id, hs);
+    const on = hs.includes(me.id);
+    if(on) hs.splice(hs.indexOf(me.id),1); else hs.push(me.id);
+    paintComments(); if(!on){ const nb = document.querySelector(`[data-chaps="${id}"]`); if(nb) nb.classList.add("pop"); }
+    try{ if(on) await api.removeCommentHaps(id, me.id); else await api.addCommentHaps(id, me.id); }
+    catch(ex){ if(on) hs.push(me.id); else hs.splice(hs.indexOf(me.id),1); paintComments(); say("Det lykkedes ikke. Prøv igen."); }
+    return;
+  }
+  const db = e.target.closest("[data-delc]");
+  if(db){
     if(!confirm("Slet kommentaren?")) return;
-    const cid = +b.dataset.delc;
-    try{ await api.deleteComment(cid); const i = cs.findIndex(c=>c.id===cid); cs.splice(i,1); ccount[m.id] = cs.length; paintMeal(m, cs); }
-    catch(err){ say("Kommentaren blev ikke slettet."); }
-  });
+    const id = +db.dataset.delc;
+    try{ await api.deleteComment(id); mealState.cs = mealState.cs.filter(c=>c.id!==id); ccount[mealState.m.id] = mealState.cs.length; paintComments(); refreshPost(mealState.m.id); }
+    catch(ex){ say("Kommentaren blev ikke slettet."); }
+    return;
+  }
+  const eb = e.target.closest("[data-editc]");
+  if(eb){
+    const id = +eb.dataset.editc, c = mealState.cs.find(x=>x.id===id); if(!c) return;
+    const txt = eb.closest(".txt");
+    txt.querySelector("p").outerHTML = `<div class="cedit"><div class="mwrap"><textarea maxlength="1000" aria-label="Ret kommentar">${esc(c.body)}</textarea></div><div class="cacts"><button type="button" class="save">Gem</button><button type="button" class="cancel">Annullér</button></div></div>`;
+    txt.querySelector(".txt > .cacts").hidden = true;
+    const ed = txt.querySelector(".cedit"), ta = ed.querySelector("textarea");
+    mentionize(ta, mealState.m.user_id);
+    ta.style.height = Math.min(160, ta.scrollHeight + 4) + "px"; ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    ed.querySelector(".cancel").onclick = () => { ed.remove(); paintComments(); };
+    ed.querySelector(".save").onclick = async () => {
+      const body = ta.value.trim(); if(!body) return;
+      if(body === c.body){ ed.remove(); paintComments(); return; }
+      try{ const u = await api.updateComment(id, body); Object.assign(c, u); ed.remove(); paintComments(); }
+      catch(ex){ say("Kommentaren blev ikke gemt. Prøv igen."); }
+    };
+  }
+});
+
+/* ---------- @tags: forslag mens man skriver ---------- */
+function mentionize(ta, ownerId){
+  const wrap = ta.closest(".mwrap"); if(!wrap) return;
+  let box = null;
+  const close = () => { if(box){ box.remove(); box = null; } };
+  const candidates = () => {
+    const ids = new Set(friendIds()); if(ownerId && ownerId !== me.id) ids.add(ownerId);
+    return [...ids].map(personOf).filter(p => p.username && p.username !== "?");
+  };
+  const update = () => {
+    const pos = ta.selectionStart, before = ta.value.slice(0, pos), mt = /(^|[^a-z0-9_.æøå@])@([a-z0-9_.æøå]{0,24})$/i.exec(before);
+    if(!mt){ close(); return; }
+    const q = mt[2].toLowerCase();
+    const list = candidates().filter(p => p.username.startsWith(q) || nameOf(p).toLowerCase().split(/\s+/).some(w => w.startsWith(q))).slice(0,5);
+    if(!list.length){ close(); return; }
+    if(!box){ box = document.createElement("div"); box.className = "mbox"; box.setAttribute("role","listbox"); wrap.appendChild(box); }
+    box.innerHTML = list.map(p => `<button type="button" role="option" data-u="${esc(p.username)}">${av(p)}<span><b>${esc(nameOf(p))}</b><small>@${esc(p.username)}</small></span></button>`).join("");
+    box.querySelectorAll("button").forEach(b => b.addEventListener("pointerdown", ev => {
+      ev.preventDefault();
+      const start = pos - mt[2].length - 1, ins = "@" + b.dataset.u + " ";
+      ta.value = ta.value.slice(0, start) + ins + ta.value.slice(pos);
+      const np = start + ins.length; ta.setSelectionRange(np, np); ta.dispatchEvent(new Event("input")); close(); ta.focus();
+    }));
+  };
+  ta.addEventListener("input", update);
+  ta.addEventListener("click", update);
+  ta.addEventListener("blur", () => setTimeout(close, 150));
 }
 
 /* ---------- del / ret aftensmad ---------- */
+const MAX_PHOTOS = 6;
 async function renderForm(editId){
-  let m = { title:"", rating:"", note:"", photo:"" };
+  let m = { title:"", rating:"", note:"" };
   if(editId){
     app.innerHTML = `<div class="wrap">${loading()}</div>`;
     const got = meals.get(editId) || await api.meal(editId).catch(()=>null);
     if(!got || got.user_id !== me.id){ location.replace("#feed"); return; }
     m = { ...got };
   }
-  let blob = null, removePhoto = false, busy = false;
+  // Billeder: { path?, blob?, url, ratio }
+  const oldPaths = photosOf(m);
+  let pics = oldPaths.map((p,i) => ({ path:p, url:"", ratio:(m.ratios||[])[i] || 4/3 }));
+  let busy = false;
   app.innerHTML = `<div class="wrap"><div class="bar">${backBtn("Annullér")}<h1>${editId ? "Ret aftensmad" : "Del aftensmad"}</h1></div>
     <form id="mf" novalidate>
-      <label class="photoPick" id="pp"><input type="file" accept="image/*" hidden id="file">
-        <span class="ph-in" id="ppIn">${I.cam}<span>Tag et billede af maden</span></span></label>
+      <div id="pics"></div>
+      <input type="file" accept="image/*" multiple hidden id="file">
       <label class="field"><span>Hvad fik du?</span><input id="title" maxlength="80" autocomplete="off" placeholder="Fx frikadeller med kartoffelsalat" value="${esc(m.title)}"></label>
       <div class="field"><span id="rlbl">Hvordan var den?</span><div class="rates" role="group" aria-labelledby="rlbl">
         <button type="button" class="rate anbefales" data-r="anbefales" aria-pressed="${m.rating==="anbefales"}"><span class="face">${RICON.anbefales("var(--rbg)")}</span>Kan anbefales</button>
         <button type="button" class="rate spiseligt" data-r="spiseligt" aria-pressed="${m.rating==="spiseligt"}"><span class="face">${RICON.spiseligt()}</span>Spiseligt</button></div></div>
-      <label class="field"><span>Fortæl lidt om den <i style="font-style:normal;color:var(--muted);font-weight:400">(valgfrit)</i></span><textarea id="note" maxlength="1000" placeholder="Opskrift, hvem der lavede den, hvad du ville gøre anderledes …">${esc(m.note)}</textarea></label>
+      <label class="field"><span>Fortæl lidt om den <i style="font-style:normal;color:var(--muted);font-weight:400">(valgfrit)</i></span><span class="mwrap" style="display:block;font-weight:400;margin:0"><textarea id="note" maxlength="1000" placeholder="Opskrift, hvem der lavede den … Skriv @ for at tagge en ven">${esc(m.note)}</textarea></span></label>
       <p class="err" id="err" hidden></p>
       <div class="formacts"><button class="btn red full" type="submit" id="save">${editId ? "Gem ændringer" : "Del aftensmad"}</button>
         ${editId ? `<button class="danger" type="button" id="del">Slet opslaget</button>` : ""}</div>
     </form></div>`;
-  const pp = $("#pp"), file = $("#file");
-  const showPic = src => { pp.classList.add("has"); pp.querySelector(".ph-in").hidden = true; pp.querySelectorAll("img,.chg,.rm").forEach(x=>x.remove());
-    pp.insertAdjacentHTML("beforeend", `<img src="${esc(src)}" alt="Billede af maden"><span class="chg">Skift billede</span><button type="button" class="rm">Fjern</button>`); };
-  const clearPic = () => { pp.classList.remove("has"); pp.querySelector(".ph-in").hidden = false; pp.querySelectorAll("img,.chg,.rm").forEach(x=>x.remove()); };
-  if(m.photo){ api.photoUrls([m.photo]).then(u => { if(u[m.photo] && !blob && !removePhoto) showPic(u[m.photo]); }).catch(()=>{}); }
-  pp.addEventListener("click", e => { if(e.target.closest(".rm")){ e.preventDefault(); blob = null; removePhoto = true; file.value = ""; clearPic(); } });
-  file.onchange = async () => {
-    const f = file.files[0]; if(!f) return;
-    try{ blob = await shrink(f, 1600); removePhoto = false; showPic(URL.createObjectURL(blob)); }
-    catch(e){ say("Billedet kunne ikke åbnes. Prøv et andet."); }
+  const file = $("#file"), box = $("#pics");
+  const paintPics = () => {
+    if(!pics.length){
+      box.innerHTML = `<button type="button" class="photoPick" id="pickBig"><span class="ph-in">${I.cam}<span>Tag eller vælg billeder af maden</span><small style="font-weight:400;color:var(--muted)">Op til ${MAX_PHOTOS} billeder</small></span></button>`;
+    } else {
+      box.innerHTML = `<div class="strip">${pics.map((p,i) => `<div class="th${i?"":" first"}">${p.url ? `<img src="${esc(p.url)}" alt="Billede ${i+1}">` : `<img data-photo="${esc(p.path)}" alt="Billede ${i+1}">`}${i===0?'<span class="cover">Forside</span>':`<button type="button" class="mk1" data-first="${i}" aria-label="Brug som forside">Sæt forside</button>`}<button type="button" class="x" data-rm="${i}" aria-label="Fjern billede ${i+1}">${I.x}</button></div>`).join("")}
+        ${pics.length < MAX_PHOTOS ? `<button type="button" class="th add" id="pickMore">${I.cam}<span>Tilføj</span></button>` : ""}</div>`;
+      hydrate(box);
+    }
   };
-  document.querySelectorAll(".rate").forEach(b => b.onclick = () => { m.rating = b.dataset.r; document.querySelectorAll(".rate").forEach(x => x.setAttribute("aria-pressed", x===b)); });
+  paintPics();
+  box.addEventListener("click", e => {
+    if(e.target.closest("#pickBig,#pickMore")){ file.click(); return; }
+    const rm = e.target.closest("[data-rm]"); if(rm){ pics.splice(+rm.dataset.rm, 1); paintPics(); return; }
+    const fs = e.target.closest("[data-first]"); if(fs){ const [p] = pics.splice(+fs.dataset.first, 1); pics.unshift(p); paintPics(); }
+  });
+  file.onchange = async () => {
+    const files = [...file.files].slice(0, MAX_PHOTOS - pics.length); file.value = "";
+    if(file.files && file.files.length > files.length) say(`Højst ${MAX_PHOTOS} billeder.`);
+    for(const f of files){
+      try{ const blob = await shrink(f, 1600); pics.push({ blob, url: URL.createObjectURL(blob), ratio: blob.ratio }); paintPics(); }
+      catch(e){ say("Et billede kunne ikke åbnes. Prøv et andet."); }
+    }
+  };
+  mentionize($("#note"), me.id);
+  document.querySelectorAll(".rate").forEach(b => b.onclick = () => { m.rating = b.dataset.r; document.querySelectorAll(".rate").forEach(x => x.setAttribute("aria-pressed", x===b)); err(""); });
   const err = msg => { const e = $("#err"); e.textContent = msg; e.hidden = !msg; };
   $("#mf").addEventListener("input", () => { if(!$("#err").hidden) err(""); });
-  document.querySelectorAll(".rate").forEach(b => b.addEventListener("click", () => err("")));
   $("#mf").onsubmit = async e => {
     e.preventDefault(); if(busy) return;
     const title = $("#title").value.trim(), note = $("#note").value.trim();
     if(!title){ err("Skriv hvad du fik at spise."); $("#title").focus(); return; }
     if(!m.rating){ err("Vælg om den kan anbefales eller er spiselig."); return; }
-    err(""); busy = true; const btn = $("#save"); btn.disabled = true; btn.textContent = blob ? "Lægger billedet op …" : "Gemmer …";
-    let newPath = "";
+    err(""); busy = true; const btn = $("#save"); btn.disabled = true;
+    const fresh = pics.filter(p => p.blob);
+    const uploaded = [];
     try{
-      const old = m.photo || "";
-      if(blob){ newPath = `${me.id}/${uid()}.jpg`; await api.uploadPhoto(newPath, blob); }
-      const photoPath = blob ? newPath : (removePhoto ? "" : old);
-      const saved = await api.saveMeal({ id: editId || null, title, rating: m.rating, note, photo: photoPath });
-      if(old && old !== photoPath) api.removePhoto(old).catch(()=>{});
+      for(let i=0;i<fresh.length;i++){
+        btn.textContent = fresh.length > 1 ? `Lægger billede ${i+1} af ${fresh.length} op …` : "Lægger billedet op …";
+        const path = `${me.id}/${uid()}.jpg`; await api.uploadPhoto(path, fresh[i].blob); fresh[i].path = path; uploaded.push(path);
+      }
+      btn.textContent = "Gemmer …";
+      const photos = pics.map(p => p.path), ratios = pics.map(p => Math.round((p.ratio || 4/3) * 1000) / 1000);
+      const saved = await api.saveMeal({ id: editId || null, title, rating: m.rating, note, photos, ratios });
+      const gone = oldPaths.filter(p => !photos.includes(p)); if(gone.length) api.removePhotos(gone).catch(()=>{});
       meals.set(saved.id, saved);
       if(!editId){ feedIds.unshift(saved.id); hapsBy.set(saved.id, []); ccount[saved.id] = 0; }
       say(editId ? "Ændringerne er gemt." : "Din aftensmad er delt.");
       location.replace(editId ? "#meal-"+saved.id : "#feed");
     }catch(ex){
-      if(newPath) api.removePhoto(newPath).catch(()=>{});
+      if(uploaded.length) api.removePhotos(uploaded).catch(()=>{});
+      fresh.forEach(p => { delete p.path; });
       busy = false; btn.disabled = false; btn.textContent = editId ? "Gem ændringer" : "Del aftensmad";
       err("Det blev ikke gemt. Tjek internettet og prøv igen.");
     }
   };
   const del = $("#del"); if(del) del.onclick = async () => {
-    if(!confirm("Slet opslaget? Haps og kommentarer forsvinder også.")) return;
+    if(!confirm("Slet opslaget? Billeder, haps og kommentarer forsvinder også.")) return;
     try{ await api.deleteMeal(m); meals.delete(m.id); feedIds = feedIds.filter(x=>x!==m.id); say("Opslaget er slettet."); location.replace("#profil"); }
     catch(ex){ say("Opslaget blev ikke slettet. Prøv igen."); }
   };
@@ -881,6 +1136,8 @@ function noteText(n){
   const who = `<b>${esc(nameOf(personOf(n.actor)))}</b>`, m = meals.get(n.meal_id);
   if(n.kind === "haps") return `${who} kunne hapse din mad`;
   if(n.kind === "comment") return `${who} kommenterede ${m ? esc(m.title) : "din aftensmad"}`;
+  if(n.kind === "comment_haps") return `${who} kunne hapse din kommentar`;
+  if(n.kind === "tag") return n.comment_id ? `${who} har tagget dig i en kommentar` : `${who} har tagget dig i ${m ? esc(m.title) : "et opslag"}`;
   if(n.kind === "friend_request") return `${who} vil være venner med dig`;
   if(n.kind === "friend_accept") return `${who} har godkendt din venneanmodning`;
   return who;
@@ -891,7 +1148,7 @@ function paintNotes(){
   el.innerHTML = notes.map(n => {
     const p = personOf(n.actor), m = meals.get(n.meal_id);
     const href = n.meal_id ? `#meal-${n.meal_id}` : `#u-${p.username}`;
-    const badge = n.kind==="haps" ? I.smallFork : n.kind==="comment" ? I.smallChat : I.smallUser;
+    const badge = (n.kind==="haps"||n.kind==="comment_haps") ? I.smallFork : (n.kind==="comment"||n.kind==="tag") ? I.smallChat : I.smallUser;
     const r = n.kind === "friend_request" ? rel(n.actor) : null;
     const right = r && r.state === "received" ? `<span class="acts2" style="display:flex;gap:6px"><button class="btn small red" type="button" data-accept="${r.f.id}">Godkend</button></span>`
       : m ? `<span class="thumb">${photo(m,"")}</span>` : "";
@@ -959,7 +1216,7 @@ function paintProfile(p, list, isMe, filter){
   app.innerHTML = `<div class="wrap"><div class="prof">${isMe ? `<button class="roundbtn topright" type="button" id="settings" aria-label="Indstillinger" style="background:var(--soft)">${I.gear}</button>` : `<button class="back topleft" type="button" data-back>${I.back}Tilbage</button>`}
       ${av(p)}<h2>${esc(nameOf(p))}</h2><p class="un">@${esc(p.username)}</p>${stats}${action}</div>
     ${canSee ? (list.length ? `<div class="filters" role="group" aria-label="Vis">${[["alle","Alle"],["anbefales","Kan anbefales"],["spiseligt","Spiseligt"]].map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>
-      <div class="grid">${shown.map(m=>`<a class="tile" href="#meal-${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}<span class="mk ${esc(m.rating)}"></span><span class="tt">${esc(m.title)}</span></a>`).join("")}</div>
+      <div class="grid">${shown.map(m=>`<a class="tile" href="#meal-${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}${photosOf(m).length>1?`<span class="many" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="7" width="13" height="13" rx="2.5"/><path d="M4 16V6.5A2.5 2.5 0 0 1 6.5 4H16"/></svg></span>`:""}<span class="mk ${esc(m.rating)}"></span><span class="tt">${esc(m.title)}</span></a>`).join("")}</div>
       ${shown.length ? "" : `<p class="hint" style="text-align:center;margin-top:16px">Intet her endnu.</p>`}`
       : `<div class="empty"><b>${isMe ? "Din første aftensmad" : "Ingen aftensmad endnu"}</b>${isMe ? "Alt hvad du deler, samles her." : ""}${isMe?`<br><a class="btn red" href="#ny">Del aftensmad</a>`:""}</div>`)
       : `<div class="locked"><b>Bliv venner for at se mere</b>Når I er venner, kan du se ${esc(gen(firstName(p)))} aftensmad.</div>`}
@@ -1005,10 +1262,78 @@ async function settingsSheet(){
   const s = sheet(`<h3>Indstillinger</h3>
     <div style="margin:0 16px 18px"><p style="font-weight:800;margin-bottom:4px">Notifikationer</p><p id="pushTxt" style="color:var(--muted);font-size:15px;margin-bottom:10px"></p><button class="btn" type="button" id="pushBtn" hidden></button></div>
     <div style="margin:0 16px 18px"><p style="font-weight:800;margin-bottom:4px">Inviter venner</p><p style="color:var(--muted);font-size:15px;margin-bottom:10px">Send linket til Haps, så kan de oprette sig og finde dig som @${esc(me.username)}.</p><button class="btn" type="button" id="share2">Del linket</button></div>
-    <div class="formacts"><button class="btn full" type="button" id="logout">Log ud</button></div>`);
+    <div class="formacts"><button class="btn full" type="button" id="logout">Log ud</button><button class="danger" type="button" id="delAcc">Slet min konto</button></div>`);
   s.el.querySelector("#share2").onclick = shareApp;
+  s.el.querySelector("#delAcc").onclick = () => { s.close(); deleteAccountSheet(); };
   s.el.querySelector("#logout").onclick = async () => { s.close(); await disablePush(true); await api.signOut(); };
   renderPush(s.el);
+}
+
+function deleteAccountSheet(){
+  const s = sheet(`<h3>Slet din konto</h3>
+    <div style="margin:0 16px 16px;font-size:15px;line-height:1.5">
+      <p style="margin-bottom:10px">Det sletter alt, hvad du har lagt op på Haps, og kan ikke fortrydes:</p>
+      <ul style="margin:0 0 12px 20px;color:var(--muted)"><li>din profil og dit profilbillede</li><li>al din aftensmad og dine billeder</li><li>dine kommentarer og haps</li><li>dine venskaber og notifikationer</li></ul>
+      <p>Skriv <b>SLET</b> for at bekræfte.</p></div>
+    <label class="field"><input id="delConfirm" autocomplete="off" autocapitalize="characters" placeholder="SLET" aria-label="Skriv SLET for at bekræfte"></label>
+    <p class="err" id="delErr" hidden></p>
+    <div class="formacts"><button class="btn red full" type="button" id="delGo" disabled>Slet min konto for altid</button><button class="btn full" type="button" id="delNo">Annullér</button></div>`);
+  const inp = s.el.querySelector("#delConfirm"), go = s.el.querySelector("#delGo");
+  inp.addEventListener("input", () => { go.disabled = inp.value.trim().toUpperCase() !== "SLET"; });
+  s.el.querySelector("#delNo").onclick = s.close;
+  go.onclick = async () => {
+    go.disabled = true; go.textContent = "Sletter …";
+    try{
+      await disablePush(true);
+      await api.deleteAccount(me.id);
+      s.close(); stopLive();
+      me = null; started = false; feedLoaded = false; feedIds = []; meals.clear(); notes = []; lastNoteId = 0; friendships = []; mealState = null;
+      try{ localStorage.removeItem("hapsPushAsked"); }catch(e){}
+      renderAuth(); say("Din konto og alt dit indhold er slettet.");
+    }catch(ex){
+      go.disabled = false; go.textContent = "Slet min konto for altid";
+      const e = s.el.querySelector("#delErr"); e.textContent = "Kontoen blev ikke slettet. Tjek internettet og prøv igen."; e.hidden = false;
+    }
+  };
+}
+
+/* ---------- live opdatering ---------- */
+let stopLive = () => {}, newMealsWaiting = 0;
+function startLive(){
+  stopLive();
+  stopLive = api.live((table, ev, n, o) => {
+    try{
+      if(table === "haps"){
+        const id = n.meal_id || o.meal_id, uid2 = n.user_id || o.user_id; if(!meals.has(id) || uid2 === me.id) return;
+        const hs = hapsBy.get(id) || []; hapsBy.set(id, hs);
+        if(ev === "INSERT" && !hs.includes(uid2)) hs.push(uid2);
+        if(ev === "DELETE" && hs.includes(uid2)) hs.splice(hs.indexOf(uid2), 1);
+        ensurePeople([uid2]).then(() => refreshPost(id));
+      } else if(table === "comments"){
+        const id = n.meal_id || o.meal_id; if(!meals.has(id)) return;
+        if(mealState && mealState.m.id === id){ refreshComments(id); return; }
+        if(ev === "INSERT") ccount[id] = (ccount[id]||0) + 1;
+        if(ev === "DELETE") ccount[id] = Math.max(0, (ccount[id]||0) - 1);
+        refreshPost(id);
+      } else if(table === "comment_haps"){
+        const cid = n.comment_id || o.comment_id;
+        if(mealState && mealState.chaps.has(cid) && (n.user_id || o.user_id) !== me.id) refreshComments(mealState.m.id);
+      } else if(table === "notifications"){
+        poll();
+      } else if(table === "meals"){
+        if(ev === "INSERT" && n.user_id !== me.id && !meals.has(n.id)){ newMealsWaiting++; showNewPill(); }
+        else if(ev === "UPDATE" && meals.has(n.id)){ meals.set(n.id, { ...meals.get(n.id), ...n }); refreshPost(n.id); }
+        else if(ev === "DELETE" && o.id && meals.has(o.id)){ meals.delete(o.id); feedIds = feedIds.filter(x=>x!==o.id); document.querySelectorAll(`.post[data-meal="${CSS.escape(o.id)}"]`).forEach(el=>el.remove()); }
+      }
+    }catch(e){}
+  });
+}
+function showNewPill(){
+  if(current !== "feed" || !newMealsWaiting) return;
+  let p = $("#newPill");
+  if(!p){ p = document.createElement("button"); p.id = "newPill"; p.type = "button"; p.className = "newpill"; app.querySelector(".wrap")?.appendChild(p);
+    p.onclick = async () => { p.remove(); newMealsWaiting = 0; window.scrollTo({top:0,behavior:"smooth"}); await refreshFeed(); }; }
+  p.innerHTML = `${I.smallFork.replace('class="plate"','class="plate" style="width:16px;height:16px;fill:none;stroke:currentColor"')}${newMealsWaiting === 1 ? "Ny aftensmad" : `${newMealsWaiting} nye aftensmåltider`}`;
 }
 
 /* ---------- push ---------- */
@@ -1052,7 +1377,7 @@ function pushBanner(){
 if("serviceWorker" in navigator){ navigator.serviceWorker.addEventListener("message", e => { if(e.data && e.data.type === "open" && me){ const h = String(e.data.url||"").split("#")[1]; if(h) location.hash = "#"+h; } }); }
 
 /* ---------- træk ned for at opdatere ---------- */
-async function refreshFeed(){ try{ await loadFeed(); await loadNotes().catch(()=>{}); if(current === "feed") paintFeed(); }catch(e){} }
+async function refreshFeed(){ newMealsWaiting = 0; const np = $("#newPill"); if(np) np.remove(); try{ await loadFeed(); await loadNotes().catch(()=>{}); if(current === "feed") paintFeed(); }catch(e){} }
 (function pull(){
   let y0 = null, d = 0, busy = false;
   const box = () => current === "feed" ? $(".ptr") : null;
@@ -1165,6 +1490,7 @@ async function start(){
     me = p; people.set(me.id, me); started = true;
     $("#tabs").hidden = false;
     loadNotes().then(()=>{ if(notes.length) lastNoteId = Math.max(...notes.map(n=>n.id)); }).catch(()=>{});
+    startLive();
     const h = location.hash.slice(1);
     if(!h || h === "demo" || /access_token|type=/.test(h)) history.replaceState(null, "", location.pathname + "#feed");
     route(); hideSplash();
@@ -1175,7 +1501,7 @@ async function start(){
 }
 api.onAuth((ev) => {
   if(ev === "PASSWORD_RECOVERY"){ recovering = true; renderNewPassword(); return; }
-  if(ev === "SIGNED_OUT"){ me = null; started = false; feedLoaded = false; feedIds = []; meals.clear(); notes = []; lastNoteId = 0; friendships = []; renderAuth(); return; }
+  if(ev === "SIGNED_OUT"){ stopLive(); me = null; started = false; feedLoaded = false; feedIds = []; meals.clear(); notes = []; lastNoteId = 0; friendships = []; renderAuth(); return; }
   if(ev === "SIGNED_IN") setTimeout(start, 0);
 });
 start();
