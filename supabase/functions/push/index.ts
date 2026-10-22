@@ -1,4 +1,4 @@
-// Haps – sender push-beskeder: haps, kommentarer, tags, venneanmodninger og ny aftensmad fra venner.
+// Haps – sender push-beskeder: haps, kommentarer, tags, venneanmodninger og nye måltider fra venner.
 // Kaldes kun af databasen (trigger) med en hemmelig header.
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -62,8 +62,9 @@ Deno.serve(async (req) => {
       const { data } = await sb.from("friendships").select("requester,addressee")
         .eq("status", "accepted").or(`requester.eq.${r.user_id},addressee.eq.${r.user_id}`);
       targets = (data || []).map((f) => (f.requester === r.user_id ? f.addressee : f.requester));
-      title = `${await nameOf(r.user_id)} har fået aftensmad`;
-      body = `${r.title} (${r.rating === "anbefales" ? "kan anbefales" : "spiseligt"})`;
+      const t = String(r.title || "mad").trim(), dish = /^[A-ZÆØÅ][a-zæøå]/.test(t) ? t[0].toLowerCase() + t.slice(1) : t;
+      title = `${await nameOf(r.user_id)} hapser ${dish}`;
+      body = r.rating === "anbefales" ? "Kan anbefales" : "Spiseligt";
       url = "./#meal-" + r.id;
     }
 
