@@ -15,8 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
 <style>
-@font-face{font-family:"Libre Baskerville";font-weight:400;src:url(fonts/libre-baskerville-latin-400-normal.woff2) format("woff2");font-display:swap}
-@font-face{font-family:"Libre Baskerville";font-weight:700;src:url(fonts/libre-baskerville-latin-700-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Fraunces;font-weight:100 900;src:url(fonts/fraunces-latin-full-normal.woff2) format("woff2");font-display:swap}
 @font-face{font-family:Figtree;font-weight:400;src:url(fonts/figtree-latin-400-normal.woff2) format("woff2");font-display:swap}
 @font-face{font-family:Figtree;font-weight:600;src:url(fonts/figtree-latin-600-normal.woff2) format("woff2");font-display:swap}
 @font-face{font-family:Figtree;font-weight:700;src:url(fonts/figtree-latin-700-normal.woff2) format("woff2");font-display:swap}
@@ -28,9 +27,9 @@
   --green:#2F7D32;
   --ink:#2A1F1A; --muted:#7D6F66; --line:#F0E3DE; --soft:#F7EFEC; --table:#F6E9DF;
   --bg:#FFFFFF;
-  --logo:"Libre Baskerville", Georgia, serif;
-  --display:"Libre Baskerville", Georgia, serif;
-  --body:"Libre Baskerville", Georgia, serif;
+  --logo:Fraunces, Georgia, serif;
+  --display:Fraunces, Georgia, serif;
+  --body:Fraunces, Georgia, serif;
   --tabs:calc(70px + env(safe-area-inset-bottom));
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -281,7 +280,9 @@ button.photoPick{width:calc(100% - 32px);font:inherit}
 .inote{margin-top:14px;padding:12px 14px;border-radius:14px;background:#FFF4D1;color:var(--mustard-ink);font-size:14.5px}
 .install .skip{display:block;margin:18px auto 0;color:var(--muted);font-weight:700;padding:10px}
 /* serif-titler */
-.dish,.bar h1,.sec,.prof h2,.empty b,.locked b,.sheet h3,.install h1{font-weight:700!important;letter-spacing:-.01em}
+body,button,input,textarea{font-variation-settings:'SOFT' 100,'opsz' 14}
+.who b,.haps,.badge,.tab,.btn,.whohapsed b{font-weight:700}
+.logo,#splash b,.dish,.bar h1,.sec,.prof h2,.empty b,.locked b,.sheet h3,.install h1{font-weight:900!important;font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 72;letter-spacing:-.045em!important}
 .bar h1{font-size:24px}.dish{font-size:23px;line-height:1.15}.prof h2{font-size:28px}
 .newpill{position:fixed;top:calc(70px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:26;display:flex;align-items:center;gap:6px;background:var(--red);color:#fff;font:700 14px var(--body);padding:9px 16px;border-radius:99px;box-shadow:0 6px 18px rgba(215,38,30,.35);animation:drop .3s ease}
 .tile .many{position:absolute;top:6px;left:6px;width:20px;height:20px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
