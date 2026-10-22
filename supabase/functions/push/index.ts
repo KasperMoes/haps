@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
       targets = (data || []).map((f) => (f.requester === r.user_id ? f.addressee : f.requester));
       const t = String(r.title || "mad").trim(), dish = /^[A-ZÆØÅ][a-zæøå]/.test(t) ? t[0].toLowerCase() + t.slice(1) : t;
       title = `${await nameOf(r.user_id)} hapser ${dish}`;
-      body = r.rating === "anbefales" ? "Kan anbefales" : "Spiseligt";
+      body = "";
       url = "./#meal-" + r.id;
     }
 
