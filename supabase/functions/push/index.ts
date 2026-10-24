@@ -1,4 +1,4 @@
-// Haps – sender push-beskeder: haps, kommentarer, tags, venneanmodninger og nye måltider fra venner.
+// Haps – sender push-beskeder: haps, kommentarer, svar, tags, venneanmodninger og nye måltider fra venner.
 // Kaldes kun af databasen (trigger) med en hemmelig header.
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -43,6 +43,9 @@ Deno.serve(async (req) => {
       } else if (r.kind === "comment") {
         const { data: cm } = await sb.from("comments").select("body").eq("id", r.comment_id).maybeSingle();
         title = `${who} kommenterede ${await mealTitle(r.meal_id)}`; body = short(cm?.body || ""); url = "./#meal-" + r.meal_id;
+      } else if (r.kind === "reply") {
+        const { data: cm } = await sb.from("comments").select("body").eq("id", r.comment_id).maybeSingle();
+        title = `${who} svarede på din kommentar`; body = short(cm?.body || ""); url = "./#meal-" + r.meal_id;
       } else if (r.kind === "comment_haps") {
         title = "Haps!"; body = `${who} kunne hapse din kommentar`; url = "./#meal-" + r.meal_id; tag = "chaps-" + r.comment_id;
       } else if (r.kind === "tag") {

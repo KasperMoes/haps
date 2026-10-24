@@ -1,7 +1,7 @@
 {
   "name": "Haps",
   "short_name": "Haps",
-  "description": "Del din aftensmad med dine venner.",
+  "description": "Del dine måltider med dine venner.",
   "lang": "da",
   "start_url": "./",
   "scope": "./",
