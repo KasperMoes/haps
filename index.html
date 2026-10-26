@@ -1510,8 +1510,6 @@ async function refreshFeed(){ newMealsWaiting = 0; const np = $("#newPill"); if(
 })();
 
 /* ---------- login ---------- */
-const CHEFS = [["Gordon Ramsay","gordonramsay"],["Jamie Oliver","jamieoliver"]];
-const CHEF = CHEFS[Math.floor(Math.random() * CHEFS.length)];
 function renderAuth(mode){
   mode = mode || "in";
   $("#tabs").hidden = true;
@@ -1519,8 +1517,8 @@ function renderAuth(mode){
     <p class="lead">Del dine måltider, og se hvad dine venner spiser.</p>
     <div class="switch" role="group"><button type="button" data-m="in" aria-pressed="${mode==="in"}">Log ind</button><button type="button" data-m="up" aria-pressed="${mode==="up"}">Opret konto</button></div>
     <form id="af" novalidate>
-      ${mode==="up" ? `<label class="field"><span>Dit navn</span><input id="an" maxlength="40" autocomplete="name" placeholder="Fx ${CHEF[0]}"></label>
-      <label class="field"><span>Brugernavn</span><input id="au" maxlength="24" autocapitalize="none" autocomplete="username" placeholder="fx ${CHEF[1]}"><small>Dine venner finder dig med det. Små bogstaver, tal, punktum og bundstreg.</small></label>` : ""}
+      ${mode==="up" ? `<label class="field"><span>Dit navn</span><input id="an" maxlength="40" autocomplete="name" placeholder="Fx Jamie"></label>
+      <label class="field"><span>Brugernavn</span><input id="au" maxlength="24" autocapitalize="none" autocomplete="username" placeholder="fx jamieoliver"><small>Dine venner finder dig med det. Små bogstaver, tal, punktum og bundstreg.</small></label>` : ""}
       <label class="field"><span>E-mail</span><input id="ae" type="email" autocomplete="email" autocapitalize="none" inputmode="email"></label>
       ${mode!=="reset" ? `<label class="field"><span>Adgangskode</span><input id="ap" type="password" autocomplete="${mode==="up"?"new-password":"current-password"}">${mode==="up"?"<small>Mindst 6 tegn.</small>":""}</label>` : ""}
       <p class="err" id="aerr" hidden></p>
