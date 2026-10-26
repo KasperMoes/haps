@@ -231,6 +231,8 @@ button.photoPick{width:calc(100% - 32px);font:inherit}
 .stats{display:flex;gap:26px;justify-content:center;margin:14px 0}
 .stats div{font-size:13px;color:var(--muted)}
 .stats b{display:block;font:800 21px var(--body);color:var(--ink)}
+.statbtn{font-size:13px;color:var(--muted);padding:0}
+.statbtn b{display:block;font:800 21px var(--body);color:var(--ink)}
 .prof .topleft{position:absolute;left:12px;top:calc(10px + env(safe-area-inset-top))}
 .prof .topright{position:absolute;right:12px;top:calc(10px + env(safe-area-inset-top))}
 .filters{display:flex;gap:8px;padding:8px 14px 12px;overflow-x:auto}
@@ -466,6 +468,7 @@ function realApi(){
     },
     async deleteComment(id){ const { error } = await sb.from("comments").delete().eq("id", id); fail(error); },
     async friendships(){ const { data, error } = await sb.from("friendships").select("*"); fail(error); return data||[]; },
+    async friendsOf(id){ const { data, error } = await sb.rpc("friends_of", { target: id }); fail(error); return data||[]; },
     async suggestFriends(){ const { data, error } = await sb.rpc("suggest_friends", { max_count: 15 }); fail(error); return data||[]; },
     async request(myId, otherId){ const { error } = await sb.from("friendships").insert({ requester:myId, addressee:otherId }); fail(error); },
     async accept(id){ const { error } = await sb.from("friendships").update({ status:"accepted" }).eq("id", id); fail(error); },
@@ -551,6 +554,10 @@ function demoApi(){
     async removeCommentHaps(id, u){ chaps = chaps.filter(h=>!(h.comment_id===id&&h.user_id===u)); },
     async deleteAccount(){ session=null; try{ localStorage.removeItem("hapsDemoIn"); }catch(e){} },
     live(){ return ()=>{}; },
+    async friendsOf(id){ const acc = friends.filter(f=>f.status==="accepted"); const ok = id==="u1" || acc.some(f=>(f.requester==="u1"&&f.addressee===id)||(f.addressee==="u1"&&f.requester===id)); if(!ok) return [];
+      const extra = { u2:["u7","u8"], u3:["u7","u9"], u4:["u5","u7","u2"] }[id] || [];
+      const ids = new Set([...acc.filter(f=>f.requester===id||f.addressee===id).map(f=>f.requester===id?f.addressee:f.requester), ...extra]);
+      return people.filter(p=>ids.has(p.id)).map(p=>({...p})); },
     async suggestFriends(){ const mutual = {u5:2,u7:3,u8:1,u9:0}; const mine = new Set(friends.filter(f=>f.requester==="u1"||f.addressee==="u1").map(f=>f.requester==="u1"?f.addressee:f.requester));
       return people.filter(p=>p.id!=="u1" && !mine.has(p.id)).map(p=>({...p, mutual:mutual[p.id]||0})).sort((a,b)=>b.mutual-a.mutual); },
     async friendships(){ return friends.map(f=>({...f})); },
@@ -1186,6 +1193,38 @@ async function friendAction(e){
 }
 app.addEventListener("click", e => { friendAction(e); });
 
+/* ---------- en persons venner ---------- */
+function friendsSheet(uid){
+  const p = personOf(uid), isMe = uid === me.id;
+  const ids = () => isMe ? friendIds() : (theirFriends.get(uid) || []);
+  const s = sheet(`<h3>${isMe ? "Dine venner" : esc(gen(firstName(p))) + " venner"}</h3><div id="fsl"></div>`);
+  const paint = () => {
+    const list = ids().map(personOf).sort((a,b)=>nameOf(a).localeCompare(nameOf(b),"da"));
+    const mutual = isMe ? [] : list.filter(x => rel(x.id).state === "friends");
+    s.el.querySelector("#fsl").innerHTML = list.length
+      ? (mutual.length && !isMe ? `<p class="hint" style="margin-top:-4px">${mutual.length} ${mutual.length===1?"fælles ven":"fælles venner"}</p>` : "")
+        + list.map(x => personRow(x, x.id === me.id ? `<span class="hint" style="margin:0">Dig</span>` : relButton(x))).join("")
+      : `<p class="hint">${isMe ? "Du har ingen venner på Haps endnu." : esc(firstName(p)) + " har ingen venner på Haps endnu."}</p>`;
+  };
+  paint();
+  s.el.addEventListener("click", async e => {
+    const go = e.target.closest("[data-go]"); if(go){ s.close(); location.hash = go.dataset.go; return; }
+    if(e.target.closest("[data-add],[data-accept],[data-decline],[data-cancel],[data-unfriend]")){ await friendAction(e); paint(); }
+  });
+}
+app.addEventListener("click", e => { const b = e.target.closest("[data-friendsof]"); if(b) friendsSheet(b.dataset.friendsof); });
+
+/* ---------- tryk på en fane, man allerede er på: op til toppen ---------- */
+document.getElementById("tabs").addEventListener("click", e => {
+  const a = e.target.closest("a.tab"); if(!a || !me) return;
+  const target = a.getAttribute("href").slice(1);
+  const here = current === target || (target === "profil" && current === "u-" + me.username);
+  if(!here) return;
+  e.preventDefault();
+  if(window.scrollY > 4){ window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  if(target === "feed") refreshFeed();          // allerede i toppen: hent nyt
+});
+
 /* ---------- notifikationer ---------- */
 async function loadNotes(){
   const list = await api.notifications();
@@ -1268,11 +1307,16 @@ async function renderProfile(username){
   try{
     if(!isMe){ friendships = await api.friendships(); }
     const r2 = isMe ? null : rel(p.id);
-    if(isMe || (r2 && r2.state === "friends")){ list = await api.mealsOf(p.id); storeMeals(list); await loadExtras(list.slice(0,60).map(m=>m.id)); }
+    if(isMe || (r2 && r2.state === "friends")){
+      const [ml, fl] = await Promise.all([api.mealsOf(p.id), isMe ? Promise.resolve(null) : api.friendsOf(p.id).catch(()=>[])]);
+      list = ml; storeMeals(list); await loadExtras(list.slice(0,60).map(m=>m.id));
+      if(fl){ fl.forEach(x => { if(!people.has(x.id)) people.set(x.id, x); }); theirFriends.set(p.id, fl.map(x=>x.id)); }
+    }
   }catch(e){}
   if(current !== myRoute) return;
   paintProfile(p, list, isMe);
 }
+const theirFriends = new Map();   // brugerId -> [venners id]
 function paintProfile(p, list, isMe, filter){
   filter = filter || "alle";
   const r = isMe ? null : rel(p.id), canSee = isMe || (r && r.state === "friends");
@@ -1284,7 +1328,7 @@ function paintProfile(p, list, isMe, filter){
   else if(r.state === "sent") action = `<button class="btn" type="button" data-cancel="${r.f.id}">Anmodning sendt · Annullér</button>`;
   else if(r.state === "received") action = `<button class="btn red" type="button" data-accept="${r.f.id}">Godkend venneanmodning</button>`;
   else action = `<button class="btn red" type="button" data-add="${esc(p.id)}">Tilføj som ven</button>`;
-  const stats = canSee ? `<div class="stats"><div><b>${list.length}</b>${list.length===1?"måltid":"måltider"}</div>${isMe?`<div><b>${friendIds().length}</b>venner</div>`:""}<div><b>${rec}</b>anbefalet</div></div>` : `<div style="height:14px"></div>`;
+  const stats = canSee ? `<div class="stats"><div><b>${list.length}</b>${list.length===1?"måltid":"måltider"}</div>${(() => { const n = isMe ? friendIds().length : (theirFriends.get(p.id)||[]).length; return `<button type="button" class="statbtn" data-friendsof="${esc(p.id)}"><b>${n}</b>${n===1?"ven":"venner"}</button>`; })()}<div><b>${rec}</b>anbefalet</div></div>` : `<div style="height:14px"></div>`;
   app.innerHTML = `<div class="wrap"><div class="prof">${isMe ? `<button class="roundbtn topright" type="button" id="settings" aria-label="Indstillinger" style="background:var(--soft)">${I.gear}</button>` : `<button class="back topleft" type="button" data-back>${I.back}Tilbage</button>`}
       ${av(p)}<h2>${esc(nameOf(p))}</h2><p class="un">@${esc(p.username)}</p>${stats}${action}</div>
     ${canSee ? (list.length ? `<div class="filters" role="group" aria-label="Vis">${[["alle","Alle"],["anbefales","Kan anbefales"],["spiseligt","Spiseligt"]].map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>

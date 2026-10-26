@@ -106,3 +106,19 @@ language sql stable security definer set search_path = public as $$
 $$;
 revoke execute on function public.suggest_friends(int) from public, anon;
 grant execute on function public.suggest_friends(int) to authenticated;
+
+-- ---------- en vens venner (migration "haps_friends_of") ----------
+-- Kun synlig for personen selv og dennes venner.
+create or replace function public.friends_of(target uuid)
+returns table (id uuid, username text, display_name text, avatar text)
+language sql stable security definer set search_path = public as $$
+  select p.id, p.username, p.display_name, p.avatar
+  from friendships f
+  join profiles p on p.id = case when f.requester = target then f.addressee else f.requester end
+  where f.status = 'accepted' and target in (f.requester, f.addressee)
+    and auth.uid() is not null
+    and (auth.uid() = target or public.are_friends(auth.uid(), target))
+  order by coalesce(nullif(p.display_name, ''), p.username);
+$$;
+revoke execute on function public.friends_of(uuid) from public, anon;
+grant execute on function public.friends_of(uuid) to authenticated;
