@@ -1,6 +1,6 @@
 // Haps – gør appen installerbar og viser push-beskeder.
 // Hæv versionsnummeret, når en ny udgave lægges op, så telefonerne henter den.
-const CACHE = "haps-v16";
+const CACHE = "haps-v17";
 const FILES = [
   "./",
   "./index.html",

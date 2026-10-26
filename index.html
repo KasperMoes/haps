@@ -260,7 +260,9 @@ button.photoPick{width:calc(100% - 32px);font:inherit}
 /* ---------- sheet, toast, overlay ---------- */
 .scrim{position:fixed;inset:0;background:rgba(42,31,26,.4);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
 .sheet{background:#fff;width:100%;max-width:560px;border-radius:24px 24px 0 0;max-height:85vh;overflow:auto;padding:8px 0 calc(16px + env(safe-area-inset-bottom));animation:up .25s ease}
-.sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
+.sheet .grab{padding:6px 0 14px;margin-top:-6px;touch-action:none;cursor:grab}
+.sheet .grab i{display:block;width:44px;height:5px;border-radius:3px;background:#E5D6CF;margin:0 auto}
+.sheet{overscroll-behavior:contain;will-change:transform}
 .sheet h3{font-family:var(--display);font-weight:400;font-size:24px;margin:0 16px 10px}
 @keyframes up{from{transform:translateY(40px);opacity:.4}}
 @keyframes fade{from{opacity:0}}
@@ -699,11 +701,45 @@ function toast(html, small){
 const say = msg => toast(esc(msg));
 function sheet(html){
   const s = document.createElement("div"); s.className = "scrim";
-  s.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  s.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab" aria-hidden="true"><i></i></div>${html}</div>`;
   document.body.appendChild(s);
-  const close = () => s.remove();
+  const el = s.querySelector(".sheet");
+  let closed = false;
+  const close = () => {
+    if(closed) return; closed = true;
+    el.style.transition = "transform .22s ease"; el.style.transform = "translateY(100%)";
+    s.style.transition = "background-color .22s ease"; s.style.backgroundColor = "rgba(42,31,26,0)";
+    setTimeout(() => s.remove(), 230);
+  };
   s.addEventListener("click", e => { if(e.target === s) close(); });
-  return { el: s.querySelector(".sheet"), close };
+  // Træk ned for at lukke: fra håndtaget, eller fra listen når den er rullet helt op
+  let y0 = null, dy = 0, t0 = 0, dragging = false;
+  el.addEventListener("touchstart", e => {
+    if(e.touches.length !== 1) return;
+    const onGrab = !!e.target.closest(".grab, h3");
+    if(!onGrab && el.scrollTop > 0) { y0 = null; return; }
+    if(e.target.closest("input,textarea")) { y0 = null; return; }
+    y0 = e.touches[0].clientY; dy = 0; t0 = Date.now(); dragging = false; el.style.transition = "none";
+  }, {passive:true});
+  el.addEventListener("touchmove", e => {
+    if(y0 === null) return;
+    const d = e.touches[0].clientY - y0;
+    if(!dragging && d < 6){ if(d < -6) y0 = null; return; }      // ruller opad: lad listen rulle
+    dragging = true; dy = Math.max(0, d);
+    el.style.transform = `translateY(${dy}px)`;
+    s.style.backgroundColor = `rgba(42,31,26,${Math.max(0, .4 * (1 - dy / 400))})`;
+    if(e.cancelable) e.preventDefault();
+  }, {passive:false});
+  const end = () => {
+    if(y0 === null) return; y0 = null;
+    if(!dragging) return;
+    const fast = dy / Math.max(1, Date.now() - t0) > 0.6;
+    if(dy > 110 || (fast && dy > 30)) { close(); return; }
+    el.style.transition = "transform .2s ease"; el.style.transform = "";
+    s.style.transition = "background-color .2s ease"; s.style.backgroundColor = "";
+  };
+  el.addEventListener("touchend", end); el.addEventListener("touchcancel", end);
+  return { el, close };
 }
 function lightbox(src, alt){
   const lb = document.createElement("div"); lb.className = "lb"; lb.setAttribute("role","dialog"); lb.setAttribute("aria-modal","true");
