@@ -435,15 +435,15 @@ function realApi(){
       if(m.id){ const { data, error } = await sb.from("meals").update(row).eq("id", m.id).select(MEAL_COLS).single(); fail(error); return data; }
       const { data, error } = await sb.from("meals").insert(row).select(MEAL_COLS).single(); fail(error); return data; },
     async deleteMeal(m){ const { error } = await sb.from("meals").delete().eq("id", m.id); fail(error); const ps = photosOf(m); if(ps.length) await sb.storage.from("photos").remove(ps); },
-    async uploadPhoto(path, blob){ const { error } = await sb.storage.from("photos").upload(path, blob, { contentType:"image/jpeg", upsert:false }); fail(error); },
-    async removePhoto(path){ if(path) await sb.storage.from("photos").remove([path]); },
-    async removePhotos(paths){ if(paths.length) await sb.storage.from("photos").remove(paths); },
+    async uploadPhoto(path, blob){ const { error } = await sb.storage.from("photos").upload(path, blob, { contentType:"image/jpeg", upsert:false, cacheControl:"31536000" }); fail(error); },
+    async removePhoto(path){ if(path) await sb.storage.from("photos").remove([path, thumbPath(path)]); },
+    async removePhotos(paths){ if(paths.length) await sb.storage.from("photos").remove([...paths, ...paths.map(thumbPath)]); },
     async photoUrls(paths){
       const need = paths.filter(p=>p && !urlCache.has(p));
       if(need.length){ const { data, error } = await sb.storage.from("photos").createSignedUrls(need, 60*60*6); fail(error); (data||[]).forEach(d=>{ if(d.signedUrl) urlCache.set(d.path, d.signedUrl); }); }
       const out = {}; paths.forEach(p=>{ if(urlCache.has(p)) out[p]=urlCache.get(p); }); return out;
     },
-    async uploadAvatar(path, blob){ const { error } = await sb.storage.from("avatars").upload(path, blob, { contentType:"image/jpeg", upsert:false }); fail(error); },
+    async uploadAvatar(path, blob){ const { error } = await sb.storage.from("avatars").upload(path, blob, { contentType:"image/jpeg", upsert:false, cacheControl:"31536000" }); fail(error); },
     async removeAvatar(path){ if(path) await sb.storage.from("avatars").remove([path]); },
     async haps(ids){ if(!ids.length) return []; const { data, error } = await sb.from("haps").select("meal_id,user_id,created_at").in("meal_id", ids).order("created_at"); fail(error); return data||[]; },
     async addHaps(mealId, myId){ const { error } = await sb.from("haps").insert({ meal_id:mealId, user_id:myId }); if(error && error.code!=="23505") fail(error); },
@@ -640,19 +640,23 @@ const TAG_RE = /(^|[^a-z0-9_.æøå@])@([a-z0-9_.æøå]{3,24})/gi;
 const richText = t => esc(t).replace(TAG_RE, (all, pre, name) => { const n = name.replace(/\.+$/,""), rest = name.slice(n.length); return `${pre}<a class="tag" href="#u-${n.toLowerCase()}">@${n}</a>${rest}`; });
 
 /* ---------- billeder ---------- */
+const thumbPath = p => String(p||"").replace(/\.jpg$/i, ".t.jpg");
 const photosOf = m => (m.photos && m.photos.length) ? m.photos : (m.photo ? [m.photo] : []);
 const clampRatio = r => Math.min(1.91, Math.max(0.8, r || 4/3));
 const ratioOf = m => clampRatio((m.ratios && m.ratios[0]) || (photosOf(m).length ? 4/3 : 4/3));
 async function hydrate(root){
   wireGalleries(root);
   const els = [...root.querySelectorAll("img[data-photo]:not([src])")]; if(!els.length) return;
-  let urls = {}; try{ urls = await api.photoUrls([...new Set(els.map(e=>e.dataset.photo))]); }catch(e){}
+  let urls = {}; try{ urls = await api.photoUrls([...new Set(els.flatMap(e=>[e.dataset.photo, e.dataset.full].filter(Boolean)))]); }catch(e){}
   els.forEach(el => { const u = urls[el.dataset.photo];
-    const fallback = () => { const s = document.createElement("span"); s.innerHTML = plateSVG(el.dataset.photo); el.replaceWith(s.firstChild); };
+    const plate = () => { const s = document.createElement("span"); s.innerHTML = plateSVG(el.dataset.full || el.dataset.photo); el.replaceWith(s.firstChild); };
+    // En miniature, der ikke findes (ældre billeder), falder tilbage til det store billede
+    const fallback = () => { const f = el.dataset.full && urls[el.dataset.full]; if(f && el.src !== f){ delete el.dataset.full; el.addEventListener("error", plate, {once:true}); el.src = f; } else plate(); };
+    if(!u && el.dataset.full && urls[el.dataset.full]){ el.addEventListener("error", plate, {once:true}); el.addEventListener("load", () => el.classList.add("in"), {once:true}); el.src = urls[el.dataset.full]; return; }
     if(u){ el.addEventListener("error", fallback, {once:true}); el.addEventListener("load", () => el.classList.add("in"), {once:true}); el.src = u; if(el.complete && el.naturalWidth) el.classList.add("in"); } else fallback(); });
 }
 // Første billede (til miniaturer)
-const photo = (m, alt) => { const ps = photosOf(m); return ps.length ? `<img data-photo="${esc(ps[0])}" alt="${esc(alt ?? m.title)}" loading="lazy">` : plateSVG(m.id); };
+const photo = (m, alt) => { const ps = photosOf(m); return ps.length ? `<img data-photo="${esc(thumbPath(ps[0]))}" data-full="${esc(ps[0])}" alt="${esc(alt ?? m.title)}" loading="lazy">` : plateSVG(m.id); };
 // Galleri: et eller flere billeder, man swiper imellem
 function gallery(m){
   const ps = photosOf(m);
@@ -668,7 +672,7 @@ function wireGalleries(root){
   });
 }
 
-async function shrink(file, max){
+async function shrink(file, max, q){
   let cv;
   try{
     const bmp = await createImageBitmap(file, {imageOrientation:"from-image"});
@@ -682,9 +686,16 @@ async function shrink(file, max){
     cv = document.createElement("canvas"); cv.width = Math.round(im.naturalWidth*k); cv.height = Math.round(im.naturalHeight*k);
     cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
   }
-  const blob = await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error("toBlob")),"image/jpeg",0.85));
-  blob.ratio = cv.width / cv.height;
+  const blob = await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error("toBlob")),"image/jpeg",q || 0.8));
+  blob.ratio = cv.width / cv.height; blob.cv = cv;
   return blob;
+}
+// Lille udgave til profilfirkanter og notifikationer (korteste side 360 px)
+async function thumbOf(cv){
+  const k = Math.min(1, 360 / Math.min(cv.width, cv.height));
+  const t = document.createElement("canvas"); t.width = Math.round(cv.width*k); t.height = Math.round(cv.height*k);
+  t.getContext("2d").drawImage(cv, 0, 0, t.width, t.height);
+  return await new Promise((res,rej)=>t.toBlob(b=>b?res(b):rej(new Error("toBlob")),"image/jpeg",0.7));
 }
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2));
 
@@ -1104,7 +1115,7 @@ async function renderForm(editId){
     const files = [...file.files].slice(0, MAX_PHOTOS - pics.length); file.value = "";
     if(file.files && file.files.length > files.length) say(`Højst ${MAX_PHOTOS} billeder.`);
     for(const f of files){
-      try{ const blob = await shrink(f, 1600); pics.push({ blob, url: URL.createObjectURL(blob), ratio: blob.ratio }); paintPics(); }
+      try{ const blob = await shrink(f, 1080, 0.78); const thumb = await thumbOf(blob.cv).catch(()=>null); delete blob.cv; pics.push({ blob, thumb, url: URL.createObjectURL(blob), ratio: blob.ratio }); paintPics(); }
       catch(e){ say("Et billede kunne ikke åbnes. Prøv et andet."); }
     }
   };
@@ -1124,6 +1135,7 @@ async function renderForm(editId){
       for(let i=0;i<fresh.length;i++){
         btn.textContent = fresh.length > 1 ? `Lægger billede ${i+1} af ${fresh.length} op …` : "Lægger billedet op …";
         const path = `${me.id}/${uid()}.jpg`; await api.uploadPhoto(path, fresh[i].blob); fresh[i].path = path; uploaded.push(path);
+        if(fresh[i].thumb) await api.uploadPhoto(thumbPath(path), fresh[i].thumb).catch(()=>{});
       }
       btn.textContent = "Gemmer …";
       const photos = pics.map(p => p.path), ratios = pics.map(p => Math.round((p.ratio || 4/3) * 1000) / 1000);
