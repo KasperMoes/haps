@@ -304,6 +304,7 @@ body,button,input,textarea{font-variation-settings:'SOFT' 100,'opsz' 14}
 .who b,.haps,.badge,.tab,.btn,.whohapsed b{font-weight:700}
 .logo,#splash b,.dish,.bar h1,.sec,.prof h2,.empty b,.locked b,.sheet h3,.install h1{font-weight:900!important;font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 72;letter-spacing:-.045em!important}
 .bar h1{font-size:24px}.dish{font-size:23px;line-height:1.15}.prof h2{font-size:28px}
+.posts .bar h1{font-size:20px}
 .newpill{position:fixed;top:calc(70px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:26;display:flex;align-items:center;gap:6px;background:var(--red);color:#fff;font:700 14px var(--body);padding:9px 16px;border-radius:99px;box-shadow:0 6px 18px rgba(215,38,30,.35);animation:drop .3s ease}
 .tile .many{position:absolute;top:6px;left:6px;width:20px;height:20px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .tile .many svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
@@ -660,7 +661,7 @@ const photo = (m, alt) => { const ps = photosOf(m); return ps.length ? `<img dat
 // Galleri: et eller flere billeder, man swiper imellem
 function gallery(m){
   const ps = photosOf(m);
-  const slides = ps.length ? ps.map((p,i) => `<div class="slide"><img data-photo="${esc(p)}" alt="${esc(m.title)}${ps.length>1?` – billede ${i+1} af ${ps.length}`:""}" ${i>1?'loading="lazy"':""} draggable="false"></div>`).join("") : `<div class="slide">${plateSVG(m.id)}</div>`;
+  const slides = ps.length ? ps.map((p,i) => `<div class="slide"><img data-photo="${esc(p)}" alt="${esc(m.title)}${ps.length>1?` – billede ${i+1} af ${ps.length}`:""}" loading="lazy" draggable="false"></div>`).join("") : `<div class="slide">${plateSVG(m.id)}</div>`;
   return `<div class="gal" data-gal style="aspect-ratio:${ratioOf(m).toFixed(3)}"><div class="track">${slides}</div>${ps.length>1 ? `<span class="count">1/${ps.length}</span><div class="dots">${ps.map((_,i)=>`<i${i?"":' class="on"'}></i>`).join("")}</div>` : ""}</div>`;
 }
 function wireGalleries(root){
@@ -855,9 +856,12 @@ window.addEventListener("hashchange", () => { navDepth++; route(); });
 function setTab(t){
   document.querySelectorAll(".tab[data-tab]").forEach(a => { if(a.dataset.tab === t) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
 }
+const scrollMemo = new Map();
 async function route(){
   if(!me) return;
   const h = decodeURIComponent(location.hash.slice(1)) || "feed";
+  if(current && current.startsWith("opslag-")) scrollMemo.set(current, window.scrollY);   // husk hvor man var i opslagene
+  if(h.startsWith("opslag-") && (current === "profil" || current.startsWith("u-"))) scrollMemo.delete(h);   // åbnet fra profilen: start ved det valgte opslag
   current = h;
   if(!h.startsWith("meal-")) mealState = null;
   window.scrollTo(0,0);
@@ -868,6 +872,7 @@ async function route(){
   if(h === "ny"){ setTab(""); return renderForm(null); }
   if(h.startsWith("ret-")){ setTab(""); return renderForm(h.slice(4)); }
   if(h.startsWith("meal-")){ setTab(""); return renderMeal(h.slice(5)); }
+  if(h.startsWith("opslag-")){ const [u, id] = h.slice(7).split("~"); setTab(u === me.username ? "profil" : ""); return renderPosts(u, id); }
   if(h.startsWith("u-")){ const u = h.slice(2); setTab(u === me.username ? "profil" : ""); return renderProfile(u); }
   location.replace("#feed");
 }
@@ -1241,6 +1246,36 @@ async function friendAction(e){
 }
 app.addEventListener("click", e => { friendAction(e); });
 
+/* ---------- en persons opslag, man ruller igennem (fra profilen) ---------- */
+async function renderPosts(username, startId){
+  const myRoute = current;
+  app.innerHTML = `<div class="wrap posts"><div class="bar">${backBtn()}<h1>${esc(username)}</h1></div><div id="postList">${loading()}</div></div>`;
+  let entry = profileLists.get(username), list;
+  try{
+    if(entry){ list = entry.filter === "alle" ? entry.list : entry.list.filter(m => m.rating === entry.filter); }
+    else {
+      const p = username === me.username ? me : await api.profileByUsername(username);
+      if(!p) throw new Error("no profile");
+      people.set(p.id, p);
+      list = await api.mealsOf(p.id); storeMeals(list);
+    }
+    const ids = list.map(m => m.id).filter(id => !hapsBy.has(id));
+    await loadExtras(ids);
+    await ensurePeople(list.map(m => m.user_id));
+  }catch(e){
+    if(current === myRoute) $("#postList").innerHTML = `<div class="empty"><b>Opslagene kunne ikke hentes</b>Tjek internettet og prøv igen.</div>`;
+    return;
+  }
+  if(current !== myRoute) return;
+  const box = $("#postList");
+  if(!list.length){ box.innerHTML = `<div class="empty"><b>Ingen måltider endnu</b></div>`; return; }
+  box.innerHTML = list.map(m => postHTML(m, false)).join("");
+  hydrate(box);
+  if(scrollMemo.has(myRoute)){ window.scrollTo(0, scrollMemo.get(myRoute)); return; }
+  const el = startId && box.querySelector(`.post[data-meal="${CSS.escape(startId)}"]`);
+  if(el){ const bar = app.querySelector(".bar"); window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 8); }
+}
+
 /* ---------- en persons venner ---------- */
 function friendsSheet(uid){
   const p = personOf(uid), isMe = uid === me.id;
@@ -1365,8 +1400,10 @@ async function renderProfile(username){
   paintProfile(p, list, isMe);
 }
 const theirFriends = new Map();   // brugerId -> [venners id]
+const profileLists = new Map();   // brugernavn -> { list, filter }
 function paintProfile(p, list, isMe, filter){
-  filter = filter || "alle";
+  filter = filter || (profileLists.get(p.username)?.list === list ? profileLists.get(p.username).filter : "alle");
+  profileLists.set(p.username, { list, filter });
   const r = isMe ? null : rel(p.id), canSee = isMe || (r && r.state === "friends");
   const rec = list.filter(m=>m.rating==="anbefales").length;
   const shown = filter === "alle" ? list : list.filter(m=>m.rating===filter);
@@ -1380,7 +1417,7 @@ function paintProfile(p, list, isMe, filter){
   app.innerHTML = `<div class="wrap"><div class="prof">${isMe ? `<button class="roundbtn topright" type="button" id="settings" aria-label="Indstillinger" style="background:var(--soft)">${I.gear}</button>` : `<button class="back topleft" type="button" data-back>${I.back}Tilbage</button>`}
       ${av(p)}<h2>${esc(nameOf(p))}</h2><p class="un">@${esc(p.username)}</p>${stats}${action}</div>
     ${canSee ? (list.length ? `<div class="filters" role="group" aria-label="Vis">${[["alle","Alle"],["anbefales","Kan anbefales"],["spiseligt","Spiseligt"]].map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>
-      <div class="grid">${shown.map(m=>`<a class="tile" href="#meal-${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}${photosOf(m).length>1?`<span class="many" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="7" width="13" height="13" rx="2.5"/><path d="M4 16V6.5A2.5 2.5 0 0 1 6.5 4H16"/></svg></span>`:""}<span class="mk ${esc(m.rating)}"></span><span class="tt"><span>${esc(m.title)}</span></span></a>`).join("")}</div>
+      <div class="grid">${shown.map(m=>`<a class="tile" href="#opslag-${esc(p.username)}~${esc(m.id)}" aria-label="${esc(m.title)}">${photo(m)}${photosOf(m).length>1?`<span class="many" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="7" width="13" height="13" rx="2.5"/><path d="M4 16V6.5A2.5 2.5 0 0 1 6.5 4H16"/></svg></span>`:""}<span class="mk ${esc(m.rating)}"></span><span class="tt"><span>${esc(m.title)}</span></span></a>`).join("")}</div>
       ${shown.length ? "" : `<p class="hint" style="text-align:center;margin-top:16px">Intet her endnu.</p>`}`
       : `<div class="empty"><b>${isMe ? "Dit første måltid" : "Ingen måltider endnu"}</b>${isMe ? "Alt hvad du deler, samles her." : ""}${isMe?`<br><a class="btn red" href="#ny">Del måltid</a>`:""}</div>`)
       : `<div class="locked"><b>Bliv venner for at se mere</b>Når I er venner, kan du se ${esc(gen(firstName(p)))} måltider.</div>`}
